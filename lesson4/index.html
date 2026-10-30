@@ -211,6 +211,7 @@ footer { margin-top: 40px; font-size: 13px; color: var(--muted); text-align: cen
 figure.shot img { cursor: zoom-in; }
 .lightbox { position: fixed; inset: 0; z-index: 50; background: rgb(0 0 0 / .86); display: grid; place-items: center; padding: 12px; cursor: zoom-out; }
 .lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; background: #fff; }
+.next-box { margin-top: 18px; box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
 .lightbox .x { position: fixed; top: 12px; right: 16px; color: #fff; font-size: 15px; font-weight: 600; }
 @media (max-width: 900px) { .lightbox { display: block; overflow: auto; -webkit-overflow-scrolling: touch; padding: 48px 12px 12px; } .lightbox img { max-width: none; max-height: none; width: auto; } .lightbox .x { background: rgb(0 0 0 / .6); padding: 6px 12px; border-radius: 999px; } }
 .qcount { position: sticky; top: 72px; z-index: 3; justify-self: end; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
@@ -771,6 +772,9 @@ function viewFinish() {
   if (S.submitted && !S.sent && SHEET_URL) pushResult().then(ok => { if (ok) { S.sent = true; save(); if (S.step === 4 && location.hash !== "#teacher") showCard(true); } });
 }
 
+/* the next published lesson (null = the last one so far) */
+const NEXT_LESSON = {"n": 5, "title": "Excel: good medical data"};
+
 function showCard(saved) {
   const box = document.getElementById("cardBox");
   box.innerHTML = `${saved ? "" : `<div class="banner warn">Your result could not be sent automatically from this device. Show this card to your teacher at the start of class, or send a screenshot.</div>`}
@@ -778,6 +782,14 @@ function showCard(saved) {
       <p><b>${esc(S.name)}</b>, group ${esc(S.group)}</p>
       <p>Test: <b>${S.best || S.score}%</b> · attempts: ${S.attempts} · level ${esc(S.level)}</p>
       <p class="note">Check code</p><p class="code">${S.code || makeCode()}</p></div>
+    <div class="sheet stack next-box">
+      ${NEXT_LESSON ? `<p class="eyebrow">Up next</p><h3 style="font-size:22px">Lesson ${NEXT_LESSON.n}: ${esc(NEXT_LESSON.title)}</h3>
+        <p class="note">Study it online before the next class. You stay signed in.</p>
+        <div class="row"><a class="btn" href="../lesson${NEXT_LESSON.n}/">Open Lesson ${NEXT_LESSON.n} →</a><a href="../">All lessons</a></div>`
+      : `<p class="eyebrow">Well done</p><h3 style="font-size:22px">You have finished all lessons published so far.</h3>
+        <p class="note">The next one will appear on the course page.</p>
+        <div class="row"><a class="btn" href="../">All lessons →</a></div>`}
+    </div>
     <div class="row"><button class="btn ghost" id="restart">Start again (new student on this device)</button></div>`;
   document.getElementById("restart").onclick = e => {
     if (!e.target.dataset.sure) { e.target.dataset.sure = "1"; e.target.textContent = "Tap again to erase this lesson on this device"; e.target.style.color = "var(--bad)"; return; }

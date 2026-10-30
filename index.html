@@ -263,11 +263,12 @@ footer { margin-top: 40px; font-size: 13px; color: var(--muted); text-align: cen
   const box = document.getElementById("continueBox");
   if (next) {
     next.a.classList.add("next");
-    const hello = profile.name ? "Hello, " + profile.name.split(" ")[0] + "! " : "";
+    const first = n => { const w = String(n).split(" "); return w[1] || w[0]; };
+    const hello = profile.name ? "Hello, " + first(profile.name) + "! " : "";
     box.innerHTML = `<div><p class="eyebrow">${doneCount ? doneCount + " of " + cards.length + " lessons done" : "Start here"}</p>
       <h3 style="font-size:22px;margin-top:6px">${hello}${next.cont ? "Continue" : "Next"}: Lesson ${next.n}</h3></div>
       <a class="btn" href="${next.a.getAttribute("href")}">${next.cont ? "Continue" : "Open"} Lesson ${next.n} →</a>`;
-    box.querySelector("h3").textContent = (profile.name ? "Hello, " + profile.name.split(" ")[0] + "! " : "") + (next.cont ? "Continue" : "Next") + ": Lesson " + next.n;
+    box.querySelector("h3").textContent = (profile.name ? "Hello, " + first(profile.name) + "! " : "") + (next.cont ? "Continue" : "Next") + ": Lesson " + next.n;
     box.hidden = false;
   }
 })();

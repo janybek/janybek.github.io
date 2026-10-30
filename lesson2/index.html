@@ -519,7 +519,8 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch
 
 /* name and group are remembered for all lessons on this device */
 const PROFILE = (() => { try { return JSON.parse(localStorage.getItem("inf-profile")) || {}; } catch (e) { return {}; } })();
-const saveProfile = (name, group) => { try { localStorage.setItem("inf-profile", JSON.stringify({ name, group })); } catch (e) {} };
+const saveProfile = p => { Object.keys(PROFILE).forEach(k => delete PROFILE[k]); Object.assign(PROFILE, p); try { localStorage.setItem("inf-profile", JSON.stringify(PROFILE)); } catch (e) {} };
+const signOut = () => { saveProfile({}); try { localStorage.removeItem("inf-profile"); } catch (e) {} };
 const STEPS = ["Start", "Slides", "Check", "Practice", "Finish"];
 const app = document.getElementById("app");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -554,7 +555,8 @@ function renderSteps(active) {
 
 function renderStudent() {
   renderSteps(S.step);
-  [viewStart, viewSlides, viewQuiz, viewPractice, viewFinish][S.step]();
+  const needLogin = SHEET_URL && !PROFILE.id && !S.submitted;
+  (needLogin ? viewStart : [viewStart, viewSlides, viewQuiz, viewPractice, viewFinish][S.step])();
   window.scrollTo(0, 0);
 }
 
@@ -570,26 +572,45 @@ function viewStart() {
     <div class="sheet stack">
     <p class="eyebrow">Before you start</p>
     <p class="note">This lesson takes about 20 minutes. Your progress is kept in this browser, so you can stop and continue later.</p>
+    ${PROFILE.id ? `<p class="banner ok">Signed in as <b>${esc(PROFILE.name)}</b>, group ${esc(PROFILE.group)} · <a href="#" id="logout">Not you? Sign out</a></p>` : `
     <div class="grid2">
-      <label class="field" for="fName">Full name<input type="text" id="fName" autocomplete="name" value="${esc(S.name || PROFILE.name || "")}" placeholder="e.g. Aigul Ivanova"></label>
-      <label class="field" for="fGroup">Group<input type="text" id="fGroup" inputmode="numeric" maxlength="2" autocomplete="off" value="${esc(S.group || PROFILE.group || "")}" placeholder="1–22"></label>
-    </div>
-    <div class="stack" style="gap:8px">
+      <label class="field" for="fId">Student ID (record book number)<input type="text" id="fId" inputmode="numeric" maxlength="7" autocomplete="username" placeholder="7 digits"></label>
+      <label class="field" for="fPin">Password (last 4 digits of your ID)<input type="password" id="fPin" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="••••"></label>
+    </div>`}
+    ${S.step === 0 ? "" : `<p class="note">Sign in to continue the lesson where you stopped.</p>`}
+    <div class="stack" style="gap:8px" ${S.step === 0 ? "" : "hidden"}>
       <p><b>Rate yourself honestly.</b> Tick what is true for you:</p>
       ${sa.map((t, i) => `<label class="check" for="sa${i}"><input type="checkbox" id="sa${i}" ${S.self[i] ? "checked" : ""}>${t}</label>`).join("")}
     </div>
-    <div class="row"><button class="btn" id="go">Start the lesson</button><span class="note" id="startMsg"></span></div>
+    <div class="row"><button class="btn" id="go">${S.step === 0 ? "Start the lesson" : "Continue"}</button><span class="note" id="startMsg"></span></div>
     </div>
   </section>`;
-  document.getElementById("fGroup").oninput = e => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 2); };
-  document.getElementById("go").onclick = () => {
-    const n = document.getElementById("fName").value.trim(); let g = document.getElementById("fGroup").value.trim();
-    if (!n || !g) { document.getElementById("startMsg").textContent = "Enter your full name and group to continue."; return; }
-    if (!/^\d{1,2}$/.test(g) || Number(g) > 22) { document.getElementById("startMsg").textContent = "Group must be a number from 1 to 22."; document.getElementById("fGroup").focus(); return; }
-    g = String(Number(g));
-    S.name = n; S.group = g; saveProfile(n, g); S.self = [0, 1, 2].map(i => document.getElementById("sa" + i).checked);
-    S.level = S.self.filter(Boolean).length >= 2 ? "B" : "A";
-    S.step = 1; save(); renderStudent(); pushResult();
+  const fId = document.getElementById("fId"), fPin = document.getElementById("fPin"), msg = document.getElementById("startMsg");
+  if (fId) fId.oninput = e => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 7); };
+  if (fPin) { fPin.oninput = e => { e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4); }; fPin.onkeydown = e => { if (e.key === "Enter") document.getElementById("go").click(); }; }
+  const lo = document.getElementById("logout");
+  if (lo) lo.onclick = e => { e.preventDefault(); signOut(); renderStudent(); };
+  document.getElementById("go").onclick = async () => {
+    if (!PROFILE.id) {
+      const id = fId.value.trim(), pin = fPin.value.trim();
+      if (!/^\d{7}$/.test(id)) { msg.textContent = "Enter your 7-digit student ID (record book number)."; fId.focus(); return; }
+      if (!/^\d{4}$/.test(pin)) { msg.textContent = "Enter the password: the last 4 digits of your student ID."; fPin.focus(); return; }
+      if (pin !== id.slice(-4)) { msg.textContent = "Wrong password. It is the last 4 digits of your student ID."; fPin.focus(); return; }
+      const btn = document.getElementById("go"); btn.disabled = true; msg.textContent = "Checking…";
+      let j = null;
+      try { j = await (await fetch(SHEET_URL + "?action=login&id=" + id + "&pin=" + pin)).json(); } catch (e) {}
+      btn.disabled = false;
+      if (!j) { msg.textContent = "No connection to the server. Check the internet and try again."; return; }
+      if (!j.ok) { msg.textContent = j.error === "unknown id" ? "This student ID is not in the list. Check it or ask your teacher." : "Login failed: " + j.error; return; }
+      saveProfile({ id: j.id, name: j.name, group: String(j.group) });
+    }
+    S.name = PROFILE.name; S.group = PROFILE.group; S.id = PROFILE.id;
+    if (S.step === 0) {
+      S.self = [0, 1, 2].map(i => document.getElementById("sa" + i).checked);
+      S.level = S.self.filter(Boolean).length >= 2 ? "B" : "A";
+      S.step = 1;
+    }
+    save(); renderStudent(); pushResult();
   };
 }
 
@@ -776,13 +797,13 @@ function showCard(saved) {
     <div class="row"><button class="btn ghost" id="restart">Start again (new student on this device)</button></div>`;
   document.getElementById("restart").onclick = e => {
     if (!e.target.dataset.sure) { e.target.dataset.sure = "1"; e.target.textContent = "Tap again to erase this lesson on this device"; e.target.style.color = "var(--bad)"; return; }
-    S = blank(); save(); renderStudent();
+    S = blank(); save(); signOut(); renderStudent();
   };
 }
 
 async function pushResult() {
-  if (!S.name || ((!DB || !UID) && !SHEET_URL)) { SAVE_STATE = "offline"; return false; }
-  const body = { lesson: LESSON.id, name: S.name.slice(0, 120), group: S.group.slice(0, 40), level: S.level, self: S.self,
+  if ((!S.name && !PROFILE.id) || ((!DB || !UID) && !SHEET_URL)) { SAVE_STATE = "offline"; return false; }
+  const body = { lesson: LESSON.id, id: PROFILE.id || "", pin: PROFILE.id ? PROFILE.id.slice(-4) : "", name: S.name.slice(0, 120), group: S.group.slice(0, 40), level: S.level, self: S.self,
     step: S.step, score: S.score, best: S.best || 0, attempts: S.attempts, answers: S.answers,
     practice: Object.keys(S.done).filter(k => S.done[k]), reflection: S.reflection.slice(0, 2000), submitted: S.submitted,
     code: S.code || makeCode(), updatedAt: new Date().toISOString() };
@@ -901,8 +922,9 @@ async function loadSheet() {
     const j = await r.json();
     if (!j.ok) { sheetErr = j.error || "error"; return; }
     /* one record per student: the latest row wins (duplicates in the sheet do not change the statistics) */
-    const latest = new Map(), nk = r => (String(r.name) + "|" + String(r.group)).toLowerCase().replace(/\s+/g, " ").trim();
-    for (const r of j.rows) { const k = nk(r), o = latest.get(k); if (!o || new Date(r.updatedAt) >= new Date(o.updatedAt)) latest.set(k, r); }
+    const latest = new Map(), nk = r => r.id ? "id:" + r.id : (String(r.name) + "|" + String(r.group)).toLowerCase().replace(/\s+/g, " ").trim();
+    const better = (a, b) => (a.submitted ? 1 : 0) - (b.submitted ? 1 : 0) || (Number(a.best) || 0) - (Number(b.best) || 0) || new Date(a.updatedAt) - new Date(b.updatedAt);
+    for (const r of j.rows) { const k = nk(r), o = latest.get(k); if (!o || better(r, o) >= 0) latest.set(k, r); }
     sheetErr = ""; sheetRows = [...latest.values()]; results = sheetRows;
   } catch (e) { sheetErr = "network"; }
 }

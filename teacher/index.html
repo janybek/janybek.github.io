@@ -242,7 +242,7 @@ const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { 
                 del: k => { try { localStorage.removeItem(k); } catch (e) {} } };
 async function sha(s) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
 
-let rows = [], loadedAt = null, group = store.get("inf-journal-group") || "", query = "";
+let rows = [], roster = [], loadedAt = null, group = store.get("inf-journal-group") || "", query = "";
 let sortBy = store.get("inf-journal-sort") || "group", sortDir = Number(store.get("inf-journal-dir")) || 1;
 const byGroup = (a, b) => a.group.localeCompare(b.group, undefined, { numeric: true }) || a.name.localeCompare(b.name);
 const passedCount = s => LESSONS.filter(L => { const r = s.lessons[L.id]; return r && Number(r.best) >= PASS; }).length;
@@ -280,10 +280,10 @@ async function load() {
   document.getElementById("topActions").hidden = false;
   app.innerHTML = `<p class="note">Загружаю результаты из Google Таблицы…</p>`;
   try {
-    const r = await fetch(SHEET_URL + "?key=" + encodeURIComponent(key));
+    const r = await fetch(SHEET_URL + "?roster=1&key=" + encodeURIComponent(key));
     const j = await r.json();
     if (!j.ok) { store.del("inf-teacher-key"); return gate(j.error === "wrong key" ? "PIN не совпадает с ключом в скрипте таблицы." : "Ошибка таблицы: " + j.error); }
-    rows = j.rows; loadedAt = new Date(); render();
+    rows = j.rows; roster = j.students || []; loadedAt = new Date(); render();
   } catch (e) {
     app.innerHTML = `<div class="banner bad">Не удалось связаться с Google Таблицей. Проверьте интернет и нажмите «Обновить».</div>`;
   }
@@ -291,12 +291,15 @@ async function load() {
 
 /* one record per student (name + group), with that student's row for every lesson */
 function students() {
+  /* everybody from the group list, then the results; the best attempt of each lesson wins */
   const map = new Map();
+  const better = (a, b) => (a.submitted ? 1 : 0) - (b.submitted ? 1 : 0) || (Number(a.best) || 0) - (Number(b.best) || 0) || new Date(a.updatedAt) - new Date(b.updatedAt);
+  for (const s of roster) map.set("id:" + s.id, { id: s.id, name: s.name, group: String(s.group), lessons: {} });
   for (const r of rows) {
-    const k = norm(r.name) + "|" + norm(r.group);
-    if (!map.has(k)) map.set(k, { name: String(r.name).trim(), group: String(r.group).trim(), lessons: {} });
+    const k = r.id ? "id:" + r.id : norm(r.name) + "|" + norm(r.group);
+    if (!map.has(k)) map.set(k, { id: r.id || "", name: String(r.name).trim(), group: String(r.group).trim(), lessons: {}, unlisted: true });
     const st = map.get(k), old = st.lessons[r.lesson];
-    if (!old || new Date(r.updatedAt) > new Date(old.updatedAt)) st.lessons[r.lesson] = r;
+    if (!old || better(r, old) > 0) st.lessons[r.lesson] = r;
   }
   return [...map.values()].sort((a, b) => a.group.localeCompare(b.group, undefined, { numeric: true }) || a.name.localeCompare(b.name));
 }
@@ -347,7 +350,7 @@ function render() {
     <section class="sheet stack">
       <p class="eyebrow">Студенты</p>
       ${list.length ? `<div class="tblwrap"><table class="res"><tr>${th("name", "Студент")}${th("group", "Группа")}${LESSONS.map(L => th(L.id, "Урок " + L.n, L.title)).join("")}${th("done", "Сдано уроков")}</tr>
-        ${list.map((s, i) => `${sortBy === "group" && (i === 0 || list[i - 1].group !== s.group) ? `<tr class="gsep"><td colspan="${LESSONS.length + 3}">Группа ${esc(s.group)} · ${list.filter(x => x.group === s.group).length} студ.</td></tr>` : ""}<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.group)}</td>${LESSONS.map(L => { const st = status(s.lessons[L.id]);
+        ${list.map((s, i) => `${sortBy === "group" && (i === 0 || list[i - 1].group !== s.group) ? `<tr class="gsep"><td colspan="${LESSONS.length + 3}">Группа ${esc(s.group)} · ${list.filter(x => x.group === s.group).length} студ.</td></tr>` : ""}<tr><td><b>${esc(s.name)}</b>${s.unlisted ? ` <span class="note" title="Имя не найдено в списке группы">(нет в списке)</span>` : ""}</td><td>${esc(s.group)}</td>${LESSONS.map(L => { const st = status(s.lessons[L.id]);
           return `<td title="${esc(st.tip)}">${st.cls ? `<span class="pill ${st.cls}">${esc(st.text)}</span>` : `<span class="note">${esc(st.text)}</span>`}</td>`; }).join("")}
           <td>${LESSONS.filter(L => { const r = s.lessons[L.id]; return r && Number(r.best) >= PASS; }).length} / ${LESSONS.length}</td></tr>`).join("")}
       </table></div>
@@ -376,9 +379,9 @@ function render() {
 
 function exportCSV(list) {
   const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const head = ["Студент", "Группа", ...LESSONS.flatMap(L => [`Урок ${L.n}: лучший балл %`, `Урок ${L.n}: попыток`, `Урок ${L.n}: отправлено`])];
+  const head = ["Студент", "№ зачётки", "Группа", ...LESSONS.flatMap(L => [`Урок ${L.n}: лучший балл %`, `Урок ${L.n}: попыток`, `Урок ${L.n}: отправлено`])];
   const lines = [head.map(cell).join(";")];
-  for (const s of list) lines.push([s.name, s.group, ...LESSONS.flatMap(L => { const r = s.lessons[L.id];
+  for (const s of list) lines.push([s.name, s.id || "", s.group, ...LESSONS.flatMap(L => { const r = s.lessons[L.id];
     return r ? [Number(r.best) || 0, Number(r.attempts) || 0, r.submitted ? "да" : "нет"] : ["", "", ""]; })].map(cell).join(";"));
   const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
   const a = document.createElement("a");

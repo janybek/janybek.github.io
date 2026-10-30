@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Informatics · Lesson 1 · IHSM</title>
+<meta name="description" content="Computer Science for medical students, Lesson 1: your computer as a doctor's working tool. Slides, self-check and practical task.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Visual language of ism.edu.kg: light grey canvas, white rounded cards with soft shadows,
+   graphite text, IHSM crimson for actions, pill-shaped buttons, SF-like type */
+:root {
+  --bg: #f5f5f7;
+  --sheet: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --accent: #aa2927;      /* IHSM crimson */
+  --accent-ink: #ffffff;
+  --accent-soft: #f8e9e8;
+  --mark: #0066cc;        /* link blue */
+  --mark-soft: #e8f1fb;
+  --ok: #1d7a3a; --ok-soft: #e4f4e8;
+  --bad: #c0392b; --bad-soft: #fbe7e5;
+  --key: #f0f0f3; --key-edge: #c7c7cc;
+  --hero: #1d1d1f;
+  --shadow: 0 2px 12px rgb(0 0 0 / .07), 0 1px 2px rgb(0 0 0 / .04);
+  --f-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --r: 18px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #000000; --sheet: #1c1c1e; --ink: #f5f5f7; --muted: #a1a1a6; --line: #38383a;
+  --accent: #e5534b; --accent-ink: #ffffff; --accent-soft: #3a1c1b; --mark: #4ea1ff; --mark-soft: #102a45;
+  --ok: #5fd07c; --ok-soft: #12301b; --bad: #ff7b6e; --bad-soft: #3b1714; --key: #2c2c2e; --key-edge: #48484a;
+  --hero: #1c1c1e; --shadow: 0 0 0 1px #2c2c2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #000000; --sheet: #1c1c1e; --ink: #f5f5f7; --muted: #a1a1a6; --line: #38383a;
+  --accent: #e5534b; --accent-ink: #ffffff; --accent-soft: #3a1c1b; --mark: #4ea1ff; --mark-soft: #102a45;
+  --ok: #5fd07c; --ok-soft: #12301b; --bad: #ff7b6e; --bad-soft: #3b1714; --key: #2c2c2e; --key-edge: #48484a;
+  --hero: #1c1c1e; --shadow: 0 0 0 1px #2c2c2e;
+  color-scheme: dark }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--f-body); -webkit-font-smoothing: antialiased;
+  padding-bottom: 48px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; margin: 0; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--mark); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 12px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+kbd, .kbd { font: 700 14px/1 var(--f-mono); background: var(--key); border: 1px solid var(--key-edge); border-bottom-width: 3px; border-radius: 7px; padding: 4px 7px; display: inline-block; white-space: nowrap; }
+code, .path { font-family: var(--f-mono); font-size: .88em; background: var(--key); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+
+/* top bar — like the IHSM site navigation */
+.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--sheet) 88%, transparent); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; justify-content: space-between; min-height: 64px; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ink); }
+.crest { width: 40px; height: 40px; flex: none; }
+.crest circle { fill: none; stroke: var(--accent); stroke-width: 2; }
+.crest text { fill: var(--accent); font: 800 11px/1 var(--f-display); letter-spacing: .02em; }
+.brand .school { font: 700 11px/1.25 var(--f-display); letter-spacing: .06em; text-transform: uppercase; }
+.brand .sep { width: 1px; align-self: stretch; background: var(--ink); opacity: .7; margin: 4px 2px; }
+.brand h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.steps { display: flex; gap: 4px; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; }
+.steps[hidden] { display: none; }
+.steps li { font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+.steps li.done { color: var(--ok); }
+.steps li.done::before { content: "✓ "; }
+.steps li.now { background: var(--ink); color: var(--bg); }
+.teacher-link { font-size: 14px; font-weight: 600; }
+
+main { padding-top: 28px; }
+.sheet { background: var(--sheet); border-radius: var(--r); box-shadow: var(--shadow); padding: clamp(20px, 4vw, 44px); }
+.stack { display: grid; gap: 18px; }
+.btn { border: 0; border-radius: 999px; padding: 12px 26px; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--accent-ink); transition: filter .15s, transform .15s; }
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: scale(.98); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.note { font-size: 15px; color: var(--muted); }
+.banner { border-radius: 14px; padding: 13px 16px; font-size: 15px; }
+.banner.warn { background: var(--mark-soft); }
+.banner.ok { background: var(--ok-soft); }
+.banner.bad { background: var(--bad-soft); }
+label.field { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+input[type=text], input[type=password], textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; width: 100%; font-weight: 400; }
+input:focus, textarea:focus, select:focus { border-color: var(--mark); outline: none; box-shadow: 0 0 0 3px var(--mark-soft); }
+textarea { min-height: 96px; resize: vertical; }
+.grid2 { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.check { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; background: var(--bg); border-radius: 12px; cursor: pointer; }
+.check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+
+/* hero on the start screen — like the IHSM homepage banner */
+.hero { border-radius: var(--r); padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 56px); color: #fff; text-align: center; display: grid; gap: 14px; justify-items: center;
+  background: radial-gradient(120% 140% at 50% 0%, #b8302d 0%, #7d1d1b 55%, #3b0d0c 100%); }
+.hero .eyebrow { color: rgb(255 255 255 / .8); }
+.hero h2 { font-size: clamp(30px, 6vw, 56px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; max-width: 18ch; }
+.hero p { font-size: clamp(17px, 2.4vw, 24px); max-width: 40ch; opacity: .92; }
+.hero .meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.hero .meta span { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgb(255 255 255 / .14); }
+
+/* slides */
+.deck { display: grid; gap: 16px; }
+.slide { background: var(--sheet); border-radius: var(--r); box-shadow: var(--shadow); padding: clamp(20px, 4vw, 48px); min-height: min(560px, 78vh); display: grid; align-content: start; gap: 20px; position: relative; overflow-wrap: anywhere; }
+.slide .no { position: absolute; top: 18px; right: 22px; font: 600 13px/1 var(--f-mono); color: var(--muted); }
+.slide h2 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 700; max-width: 22ch; }
+.slide .lead { font-size: clamp(18px, 2.2vw, 22px); color: var(--muted); max-width: 60ch; }
+.slide ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.tiles { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.tile { background: var(--bg); border-radius: 14px; padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.tile b { font-family: var(--f-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.tile .unit { font: 600 11px/1 var(--f-body); color: var(--accent); letter-spacing: .1em; text-transform: uppercase; }
+.analogy { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.analogy .tile { border-top: 4px solid var(--accent); }
+.analogy svg { width: 46px; height: 46px; }
+.analogy svg * { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+table.ext { border-collapse: collapse; width: 100%; font-size: 16px; }
+table.ext td, table.ext th { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; vertical-align: top; }
+.tblwrap { overflow-x: auto; }
+.tree { font: 500 15px/1.7 var(--f-mono); background: var(--bg); border-radius: 12px; padding: 14px 16px; white-space: pre; overflow-x: auto; }
+.good { color: var(--ok); font-weight: 700; } .bad { color: var(--bad); font-weight: 700; }
+.rule321 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rule321 div { border-radius: 14px; padding: 16px; background: var(--accent-soft); display: grid; gap: 4px; }
+.rule321 strong { font: 800 42px/1 var(--f-display); color: var(--accent); }
+@media (max-width: 520px) { .rule321 { grid-template-columns: 1fr; } }
+.keys { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.keyrow { display: flex; gap: 10px; align-items: center; background: var(--bg); border-radius: 12px; padding: 10px 12px; border: 1px solid transparent; }
+.keyrow.hit { border-color: var(--ok); background: var(--ok-soft); }
+.keyrow .combo { flex: none; display: flex; gap: 4px; }
+.term { border: 0; background: none; padding: 0; color: inherit; font: inherit; font-weight: 600; border-bottom: 2px dotted var(--accent); cursor: help; }
+.pop { position: fixed; z-index: 30; max-width: min(340px, calc(100vw - 32px)); background: var(--ink); color: var(--bg); border-radius: 14px; padding: 13px 15px; font-size: 15px; box-shadow: 0 12px 32px rgb(0 0 0 / .25); }
+.pop b { display: block; margin-bottom: 4px; }
+.deck-nav { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dots span.seen { background: color-mix(in srgb, var(--accent) 40%, var(--line)); } .dots span.cur { background: var(--accent); width: 22px; border-radius: 4px; }
+
+/* quiz */
+.q { background: var(--sheet); border: 0; border-radius: var(--r); box-shadow: var(--shadow); padding: 22px; display: grid; gap: 12px; margin: 0; min-width: 0; }
+.q h3 { font-size: 19px; font-family: var(--f-body); font-weight: 600; letter-spacing: -0.01em; }
+.q .num { font: 600 12px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0; }
+.opt { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg); border: 1px solid transparent; border-radius: 12px; cursor: pointer; }
+.opt input { margin-top: 5px; accent-color: var(--accent); flex: none; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.match { display: grid; gap: 8px; }
+.match label { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 160px); gap: 10px; align-items: center; }
+.explain { font-size: 15px; border-left: 3px solid var(--accent); padding-left: 12px; }
+.score { font: 800 64px/1 var(--f-display); color: var(--accent); letter-spacing: -0.03em; }
+
+/* practice + result card */
+.task { display: grid; gap: 4px; }
+.level { display: inline-block; font: 600 12px/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; }
+.card { border: 2px dashed var(--accent); border-radius: var(--r); padding: 20px; display: grid; gap: 6px; }
+details.faq summary { cursor: pointer; }
+.card .code { font: 700 24px/1 var(--f-mono); letter-spacing: .14em; }
+
+/* teacher */
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 18px; background: var(--sheet); border-radius: 999px; padding: 4px; box-shadow: var(--shadow); width: fit-content; max-width: 100%; }
+.tabs button { border: 0; background: none; padding: 9px 16px; font-weight: 600; font-size: 15px; color: var(--muted); border-radius: 999px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--bg); background: var(--ink); }
+.plan { display: grid; gap: 12px; }
+.phase { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px; border-radius: 14px; padding: 18px; background: var(--sheet); box-shadow: var(--shadow); }
+.phase.now { box-shadow: inset 4px 0 0 var(--accent), var(--shadow); }
+.phase .t { font: 700 15px/1.3 var(--f-mono); color: var(--accent); }
+.phase h3 { font-size: 18px; margin-bottom: 6px; }
+.say { background: var(--accent-soft); border-radius: 12px; padding: 11px 14px; font-size: 16px; }
+.say::before { content: "SAY: "; font: 700 12px/1 var(--f-body); letter-spacing: .1em; color: var(--accent); }
+.tip { background: var(--mark-soft); border-radius: 12px; padding: 11px 14px; font-size: 15px; }
+.tip::before { content: "Совет: "; font-weight: 700; color: var(--mark); }
+.ask { box-shadow: inset 0 0 0 1px var(--accent); border-radius: 12px; padding: 11px 14px; font-size: 16px; }
+.ask::before { content: "ASK: "; font: 700 12px/1 var(--f-body); letter-spacing: .1em; color: var(--accent); }
+.presenter { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 860px) { .presenter { grid-template-columns: 1fr; } .phase { grid-template-columns: 1fr; } }
+.presenter .slide { min-height: 0; }
+.notes { display: grid; gap: 12px; position: sticky; top: 84px; }
+.clock { font: 700 30px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.stat { border-radius: 14px; padding: 16px; background: var(--sheet); box-shadow: var(--shadow); }
+.stat b { display: block; font: 700 32px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+table.res { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+table.res th, table.res td { border-bottom: 1px solid var(--line); padding: 9px 8px; text-align: left; vertical-align: top; }
+table.res th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.bad { background: var(--bad-soft); color: var(--bad); }
+.bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; min-width: 80px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.bar.low i { background: var(--bad); }
+footer { margin-top: 40px; font-size: 13px; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: no-preference) { .slide, .q, .sheet { animation: in .3s ease-out; } @keyframes in { from { transform: translateY(8px); opacity: .5; } to { transform: none; opacity: 1; } } }
+@media print { .top, .deck-nav, .btn { display: none !important; } body { background: #fff; } .sheet, .slide, .q { box-shadow: none; border: 1px solid #ccc; } }
+
+/* ---------- UX additions ---------- */
+.home-link { font-size: 14px; font-weight: 600; color: var(--ink); }
+.steps .of { display: none; }
+figure.shot img { cursor: zoom-in; }
+.lightbox { position: fixed; inset: 0; z-index: 50; background: rgb(0 0 0 / .86); display: grid; place-items: center; padding: 12px; cursor: zoom-out; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: 8px; background: #fff; }
+.lightbox .x { position: fixed; top: 12px; right: 16px; color: #fff; font-size: 15px; font-weight: 600; }
+@media (max-width: 900px) { .lightbox { display: block; overflow: auto; -webkit-overflow-scrolling: touch; padding: 48px 12px 12px; } .lightbox img { max-width: none; max-height: none; width: auto; } .lightbox .x { background: rgb(0 0 0 / .6); padding: 6px 12px; border-radius: 999px; } }
+.qcount { position: sticky; top: 72px; z-index: 3; justify-self: end; background: var(--ink); color: var(--bg); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); }
+.qcount.all { background: var(--ok); color: #fff; }
+.q.missing { box-shadow: 0 0 0 2px var(--bad), var(--shadow); }
+#tSlideBox:fullscreen { background: var(--bg); padding: 4vh 5vw; overflow: auto; display: grid; align-content: center; }
+#tSlideBox:fullscreen .slide { font-size: 1.25em; box-shadow: none; }
+#tSlideBox:fullscreen .fs-hint { display: block; }
+.fs-hint { display: none; position: fixed; bottom: 12px; right: 18px; font-size: 13px; color: var(--muted); }
+@media (max-width: 700px) {
+  .brand .school, .brand .sep, .crest { display: none; }
+  .brand h1 { font-size: 15px; }
+  .top .wrap { min-height: 52px; gap: 6px 12px; }
+  .steps li:not(.now) { display: none; }
+  .steps .of { display: inline; }
+  .deck-nav { position: sticky; bottom: 0; z-index: 4; background: var(--bg); padding: 10px 0 calc(10px + env(safe-area-inset-bottom, 0px)); margin: 0 -2px; }
+  .deck-nav .dots { display: none; }
+  .qcount { top: 60px; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="IHSM Informatics, Lesson 1">
+      <svg class="crest" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/><text x="20" y="24" text-anchor="middle">IHSM</text></svg>
+      <span class="school">International<br>Higher School<br>of Medicine</span>
+      <span class="sep" aria-hidden="true"></span>
+      <h1>Informatics · Lesson 1</h1>
+    </a>
+    <ol class="steps" id="steps" aria-label="Lesson steps"></ol>
+    <a class="home-link" href="../">← All lessons</a>
+    <a class="teacher-link" id="teacherLink" href="#teacher" hidden>Панель преподавателя</a>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+<footer class="wrap">Department of Natural Sciences Disciplines · Computer Science for medical students · Teacher: Zh. R. Sultanov</footer>
+<div class="pop" id="pop" role="tooltip" hidden></div>
+
+<script>
+/* ======================= CONTENT ======================= */
+const LESSON = { id: "L1", title: "Your Computer: A Doctor's Working Tool", pass: 70 };
+
+const GLOSSARY = {
+  cpu: ["CPU (processor)", "The part that performs calculations and runs programs. Speed is measured in GHz; more cores means more tasks at once. Русский: процессор."],
+  ram: ["RAM (memory)", "Temporary working memory. Holds what you are doing right now and is cleared when the power goes off. Русский: оперативная память."],
+  ssd: ["SSD / HDD (storage)", "Long-term storage for files and programs. Data stays after the computer is switched off. Русский: накопитель, жёсткий диск."],
+  os: ["Operating system", "The main program that starts the computer, runs other programs, manages files and devices. Examples: Windows, macOS, Android. Русский: операционная система."],
+  ext: ["File extension", "The letters after the dot in a file name (.docx, .pdf). They tell the computer which program opens the file. Русский: расширение файла."],
+  path: ["Path", "The full address of a file: drive, folders and file name, e.g. C:\\Users\\Student\\Documents\\report.docx. Русский: путь к файлу."],
+  cloud: ["Cloud storage", "Files kept on a company's servers (Google Drive, OneDrive) and available from any device with internet. Русский: облачное хранилище."],
+  backup: ["Backup", "An extra copy of your files kept somewhere else, so you do not lose them. Русский: резервная копия."],
+  dicom: ["DICOM (.dcm)", "The international standard format for medical images: X-ray, CT, MRI, ultrasound. Opened with special DICOM viewers."],
+  tfa: ["Two-factor authentication (2FA)", "Login with a password plus a second proof, usually a code on your phone. Русский: двухфакторная аутентификация."],
+  ehr: ["EHR", "Electronic health record — the patient's medical record kept in a computer system. Русский: электронная медицинская карта."]
+};
+const T = (k, txt) => `<button type="button" class="term" data-term="${k}">${txt}</button>`;
+
+const ICON = {
+  cpu: '<svg viewBox="0 0 48 48"><rect x="12" y="12" width="24" height="24" rx="3"/><rect x="19" y="19" width="10" height="10"/><path d="M18 6v6M24 6v6M30 6v6M18 36v6M24 36v6M30 36v6M6 18h6M6 24h6M6 30h6M36 18h6M36 24h6M36 30h6"/></svg>',
+  ram: '<svg viewBox="0 0 48 48"><rect x="4" y="16" width="40" height="14" rx="2"/><path d="M10 30v5M16 30v5M22 30v5M28 30v5M34 30v5M40 30v5"/><rect x="9" y="20" width="6" height="6"/><rect x="21" y="20" width="6" height="6"/><rect x="33" y="20" width="6" height="6"/></svg>',
+  ssd: '<svg viewBox="0 0 48 48"><path d="M8 10h32v28H8z"/><path d="M8 18h32M8 28h32"/><circle cx="34" cy="14" r="1.5"/><circle cx="34" cy="23" r="1.5"/><circle cx="34" cy="33" r="1.5"/></svg>'
+};
+
+/* Each slide: html for students + notes for the teacher (say / ask / tip / sec = suggested seconds in class recap) */
+const SLIDES = [
+ { title: "Title",
+   html: `<p class="eyebrow">Computer Science · Lesson 1 · about 20 minutes</p>
+     <h2>Your computer: a doctor's working tool</h2>
+     <p class="lead">Today you will learn what is inside a computer, what the operating system does, how to keep files in order, and how to work faster and safer.</p>
+     <div class="tiles">
+       <div class="tile"><b>1. Slides</b><span class="note">12 short slides. Tap the underlined words for explanations.</span></div>
+       <div class="tile"><b>2. Check yourself</b><span class="note">10 questions. You need ${70}% to open the practical task.</span></div>
+       <div class="tile"><b>3. Practice in class</b><span class="note">Your task card for the computer lab, level A or B.</span></div>
+     </div>`,
+   say: "Today's lesson is about the computer as a working tool of a doctor. Every one of you will use computers every day in the hospital — for patient records, lab results and research.",
+   ask: "Who uses a computer every day? Who uses only a phone?",
+   tip: "Спросите, у кого нет компьютера дома, — это ваши студенты уровня A. Посадите их рядом с более опытными студентами." },
+ { title: "Why a doctor needs computer skills",
+   html: `<h2>Why a doctor needs computer skills</h2>
+     <div class="tiles">
+       <div class="tile"><span class="unit">RECORDS</span><b>${T("ehr","EHR")}</b><span class="note">Patient history, prescriptions and referrals are kept in hospital information systems.</span></div>
+       <div class="tile"><span class="unit">DIAGNOSTICS</span><b>Lab and imaging</b><span class="note">Blood tests arrive as tables; X-ray and CT images arrive as ${T("dicom","DICOM")} files.</span></div>
+       <div class="tile"><span class="unit">EVIDENCE</span><b>Research</b><span class="note">PubMed, clinical guidelines and medical calculators are online.</span></div>
+       <div class="tile"><span class="unit">REMOTE CARE</span><b>Telemedicine</b><span class="note">Video consultations and messages with patients and colleagues.</span></div>
+       <div class="tile"><span class="unit">NEW TOOLS</span><b>AI assistants</b><span class="note">Useful for drafts and explanations — but every answer must be checked.</span></div>
+     </div>`,
+   say: "A modern doctor spends a large part of the working day at a computer: writing records, reading lab results, looking at images, searching for evidence. Weak computer skills cost time — and time is the patient's time.",
+   ask: "Where have you already seen computers in a clinic or hospital?",
+   tip: "Приведите пример из местной практики: электронная очередь, электронные направления, результаты анализов онлайн." },
+ { title: "Hardware and software",
+   html: `<h2>Hardware and software</h2>
+     <p class="lead">A computer is a body and a mind. You need both.</p>
+     <div class="grid2">
+       <div class="tile"><span class="unit">YOU CAN TOUCH IT</span><b>Hardware</b><span class="note">The physical parts: processor, memory, storage, keyboard, monitor, printer.</span></div>
+       <div class="tile"><span class="unit">YOU CANNOT TOUCH IT</span><b>Software</b><span class="note">Programs: the ${T("os","operating system")}, Word, Excel, a browser, the hospital information system.</span></div>
+     </div>
+     <p class="note">Like a doctor: the body is the hardware, the knowledge and skills are the software.</p>`,
+   say: "Hardware is everything you can touch. Software is the set of instructions that tells the hardware what to do. Without software, a computer is just metal and plastic.",
+   ask: "Is a mobile app hardware or software? Is a printer hardware or software?",
+   tip: "Быстрый опрос руками: «hardware — поднимите правую руку, software — левую», называйте предметы." },
+ { title: "Inside the computer",
+   html: `<h2>Inside the computer: think of a clinic</h2>
+     <div class="analogy">
+       <div class="tile">${ICON.cpu}<span class="unit">GHz · cores</span><b>${T("cpu","CPU")} = the doctor</b><span class="note">Thinks and makes decisions. Runs every calculation and program.</span></div>
+       <div class="tile">${ICON.ram}<span class="unit">GB · 8–32 GB typical</span><b>${T("ram","RAM")} = the desk</b><span class="note">Holds the patient files you are working on now. Cleared when the power goes off.</span></div>
+       <div class="tile">${ICON.ssd}<span class="unit">GB · TB</span><b>${T("ssd","SSD")} = the archive</b><span class="note">Keeps all records for years. Data stays after switching off.</span></div>
+     </div>
+     <p class="note">A bigger desk (more RAM) lets you work with more files at once. A faster doctor (better CPU) finishes work sooner. A bigger archive (more storage) keeps more files.</p>`,
+   say: "Remember the clinic: the processor is the doctor who thinks, RAM is the desk with the files you are working on right now, and the SSD is the archive. When the power goes off, the desk is cleared — that is why we save our work.",
+   ask: "You typed a report for an hour and the power went off. You did not press Save. Where was your text, and why is it gone?",
+   tip: "Это самый важный слайд урока. Если тест покажет ошибки в вопросах 1–2, вернитесь сюда на разборе.",
+   sec: 120 },
+ { title: "Input, output and storage devices",
+   html: `<h2>Devices around the computer</h2>
+     <div class="tiles">
+       <div class="tile"><span class="unit">INPUT → computer</span><b>Input</b><span class="note">Keyboard, mouse, scanner, barcode scanner for test tubes, webcam, microphone.</span></div>
+       <div class="tile"><span class="unit">computer → YOU</span><b>Output</b><span class="note">Monitor, printer, speakers, headphones.</span></div>
+       <div class="tile"><span class="unit">KEEPS DATA</span><b>Storage</b><span class="note">USB flash drive, external drive, ${T("cloud","cloud storage")}.</span></div>
+       <div class="tile"><span class="unit">IN THE CLINIC</span><b>Medical devices</b><span class="note">ECG machines, ultrasound and analysers also send data to computers.</span></div>
+     </div>`,
+   say: "Input devices send information into the computer, output devices bring it back to us, storage devices keep it. Many medical devices are also connected to computers.",
+   ask: "Is a touchscreen input or output? (Both.)",
+   tip: "Студенты часто путают сканер и принтер. Спросите: «куда идёт информация?»" },
+ { title: "Operating system",
+   html: `<h2>The operating system: the computer's manager</h2>
+     <div class="grid2">
+       <div class="tile"><b>Computers</b><span class="note">Windows · macOS · Linux</span></div>
+       <div class="tile"><b>Phones and tablets</b><span class="note">Android · iOS</span></div>
+     </div>
+     <p class="lead">The ${T("os","operating system")} does four main jobs:</p>
+     <ul>
+       <li><b>Runs programs</b> and shares the processor and memory between them.</li>
+       <li><b>Manages files and folders</b> on the storage.</li>
+       <li><b>Controls devices</b> — printer, keyboard, camera — through drivers.</li>
+       <li><b>Protects</b> the computer: users, passwords, updates.</li>
+     </ul>`,
+   say: "The operating system is the first program that starts when you switch the computer on. It is like the head nurse of a department: it organises everything so that the other programs can work.",
+   ask: "Which operating system is on your phone?",
+   tip: "Не углубляйтесь в историю ОС. Достаточно четырёх функций — они будут в тесте (вопрос 4)." },
+ { title: "Files, folders and extensions",
+   html: `<h2>Files, folders and extensions</h2>
+     <p class="lead">A file is a document. A folder is a case folder that holds documents. The ${T("path","path")} is the full address:</p>
+     <p><span class="path">C:\\Users\\Student\\Documents\\Informatics\\Lesson01\\report.docx</span></p>
+     <div class="tblwrap"><table class="ext">
+       <tr><th>${T("ext","Extension")}</th><th>What it is</th><th>Opens in</th></tr>
+       <tr><td><code>.docx</code></td><td>Text document</td><td>Word, Google Docs</td></tr>
+       <tr><td><code>.xlsx</code></td><td>Spreadsheet</td><td>Excel, Google Sheets</td></tr>
+       <tr><td><code>.pptx</code></td><td>Presentation</td><td>PowerPoint</td></tr>
+       <tr><td><code>.pdf</code></td><td>Fixed document for reading and printing</td><td>Any PDF reader, browser</td></tr>
+       <tr><td><code>.jpg .png</code></td><td>Picture, photo</td><td>Photos, browser</td></tr>
+       <tr><td><code>.dcm</code></td><td>Medical image (${T("dicom","DICOM")})</td><td>DICOM viewer</td></tr>
+     </table></div>
+     <p class="note">Tip: in File Explorer choose <b>View → Show → File name extensions</b> so you always see them.</p>`,
+   say: "Every file has a name and an extension. The extension tells the computer which program should open it. A path is like an address: drive, folders, file.",
+   ask: "A lab sends you 'results.xlsx'. Which program will open it?",
+   tip: "Покажите путь к файлу в Проводнике вживую: щёлкните в адресную строку — путь станет текстом.",
+   sec: 120 },
+ { title: "Name and organise your files",
+   html: `<h2>Name and organise your files</h2>
+     <div class="grid2">
+       <div class="stack">
+         <p class="eyebrow">One folder for the course</p>
+         <div class="tree">Documents
+└─ Informatics
+   ├─ Lesson01
+   ├─ Lesson02
+   └─ Archive</div>
+       </div>
+       <div class="stack">
+         <p class="eyebrow">Naming rule: date_subject_topic_surname</p>
+         <p class="good">✓ 2026-09-02_Informatics_Lesson01_Ivanova.docx</p>
+         <p class="bad">✗ New Document (3).docx</p>
+         <p class="bad">✗ final final 2.docx</p>
+         <p class="bad">✗ лаба.docx</p>
+         <p class="note">Write the date as year-month-day: files then sort in the right order. Avoid spaces and special symbols.</p>
+       </div>
+     </div>`,
+   say: "In the hospital, a lost document can harm a patient. Train the habit now: one folder per course, one clear rule for names.",
+   ask: "Why do we write the date as 2026-09-02 and not 02.09.2026? (Files sort correctly by name.)",
+   tip: "Это правило студенты сразу применяют на практике — проверяйте имена файлов в задании A3." },
+ { title: "Local, cloud and backup",
+   html: `<h2>Where do your files live?</h2>
+     <div class="grid2">
+       <div class="tile"><span class="unit">LOCAL</span><b>On this computer</b><span class="note">Fast and works without internet. Lost if the disk breaks or the laptop is stolen.</span></div>
+       <div class="tile"><span class="unit">CLOUD</span><b>Google Drive, OneDrive</b><span class="note">On the company's servers. Available from any device with internet. Easy to share.</span></div>
+     </div>
+     <p class="lead">The 3-2-1 ${T("backup","backup")} rule:</p>
+     <div class="rule321">
+       <div><strong>3</strong>copies of important files</div>
+       <div><strong>2</strong>different kinds of storage</div>
+       <div><strong>1</strong>copy in another place, e.g. the cloud</div>
+     </div>`,
+   say: "A file in the cloud is stored on the servers of Google or Microsoft, not on your phone. That is why you can open it anywhere. Important files need more than one copy: the 3-2-1 rule.",
+   ask: "Your laptop with your thesis is stolen today. With the 3-2-1 rule, what have you lost?",
+   tip: "Вопрос 8 теста про облако — исторически самый трудный. Если процент низкий, разберите этот слайд в начале пары.",
+   sec: 120 },
+ { title: "Keyboard shortcuts",
+   html: `<h2>Keyboard shortcuts save hours</h2>
+     <p class="note">Try them here on a computer: press a combination and its row turns green. On a phone, just read them.</p>
+     <div class="keys" id="keys">
+       <div class="keyrow" data-k="c"><span class="combo"><kbd>Ctrl</kbd><kbd>C</kbd></span>Copy</div>
+       <div class="keyrow" data-k="v"><span class="combo"><kbd>Ctrl</kbd><kbd>V</kbd></span>Paste</div>
+       <div class="keyrow" data-k="x"><span class="combo"><kbd>Ctrl</kbd><kbd>X</kbd></span>Cut (move)</div>
+       <div class="keyrow" data-k="z"><span class="combo"><kbd>Ctrl</kbd><kbd>Z</kbd></span>Undo</div>
+       <div class="keyrow" data-k="s"><span class="combo"><kbd>Ctrl</kbd><kbd>S</kbd></span>Save</div>
+       <div class="keyrow" data-k="f"><span class="combo"><kbd>Ctrl</kbd><kbd>F</kbd></span>Find on the page</div>
+       <div class="keyrow"><span class="combo"><kbd>Alt</kbd><kbd>Tab</kbd></span>Switch windows</div>
+       <div class="keyrow"><span class="combo"><kbd>Win</kbd><kbd>E</kbd></span>Open File Explorer</div>
+       <div class="keyrow"><span class="combo"><kbd>Win</kbd><kbd>L</kbd></span>Lock the screen</div>
+     </div>`,
+   say: "Five shortcuts — copy, paste, cut, undo, save — will save you hours. And one is about patient safety: Windows plus L locks the screen when you leave the workstation.",
+   ask: "You deleted a paragraph by mistake. Which shortcut brings it back?",
+   tip: "Сделайте мини-игру: вы называете действие, класс хором называет сочетание клавиш." },
+ { title: "Safety",
+   html: `<h2>Safety: protect yourself and your patients</h2>
+     <ul>
+       <li><b>Long passphrase</b> instead of a short password: <code>Green-Stethoscope-Runs-27</code> is better than <code>Aa123456</code>.</li>
+       <li><b>${T("tfa","Two-factor authentication")}</b> on your e-mail and university accounts.</li>
+       <li><b>Lock the screen</b> (<kbd>Win</kbd> + <kbd>L</kbd>) every time you leave the computer.</li>
+       <li><b>Patient data stays in approved systems.</b> Never send it through personal messengers, public file converters or AI chats.</li>
+       <li><b>Phishing:</b> a letter that asks for your password "urgently" is an attack. Check the sender and do not click.</li>
+     </ul>`,
+   say: "Medical data is among the most sensitive data there is. A doctor is responsible not only for treatment but also for the patient's information.",
+   ask: "A message says: 'Your university account will be closed today, enter your password here.' What do you do?",
+   tip: "Свяжите с врачебной тайной. Вопрос 10 теста — ситуационная задача по этому слайду." },
+ { title: "Summary",
+   html: `<h2>Five things to remember</h2>
+     <ul>
+       <li>CPU = doctor, RAM = desk (cleared at power off), SSD = archive.</li>
+       <li>The operating system runs programs, manages files, controls devices and protects.</li>
+       <li>Extensions tell which program opens a file; <code>.dcm</code> is a medical image.</li>
+       <li>One course folder, one naming rule, the 3-2-1 backup rule.</li>
+       <li>Lock the screen and keep patient data in approved systems.</li>
+     </ul>
+     <div class="banner ok">Next: 10 questions. Get ${70}% or more to open your practical task for the computer lab.</div>`,
+   say: "Let us repeat the five main ideas together. Who can say them without looking?",
+   ask: "Name one thing from today that you will do differently on your own computer.",
+   tip: "Финальное резюме проговаривают студенты, а не вы." }
+];
+
+const QUESTIONS = [
+ { id: "q1", type: "mc", slide: 4, text: "Which part works like the doctor's desk: it holds what you are working on now and is cleared when the power goes off?",
+   options: ["SSD", "RAM", "CPU", "Monitor"], answer: 1,
+   why: "RAM is temporary working memory. Unsaved work in RAM is lost when the power goes off." },
+ { id: "q2", type: "mc", slide: 4, text: "You saved a report and switched off the computer. Where is the report kept?",
+   options: ["In RAM", "In the CPU", "On the storage drive (SSD/HDD)", "On the monitor"], answer: 2,
+   why: "Storage (SSD/HDD) keeps files after the power is off — it is the archive." },
+ { id: "q3", type: "match", slide: 5, text: "Match each device with its type.",
+   items: ["Keyboard", "Printer", "Barcode scanner", "Monitor", "USB flash drive"], choices: ["Input", "Output", "Storage"],
+   answer: [0, 1, 0, 1, 2],
+   why: "Input sends data into the computer, output shows it to you, storage keeps it." },
+ { id: "q4", type: "mc", slide: 6, text: "Which of these is NOT a job of the operating system?",
+   options: ["Running programs", "Managing files and folders", "Controlling the printer", "Making a diagnosis"], answer: 3,
+   why: "The OS manages programs, files, devices and security. Diagnosis is the doctor's job." },
+ { id: "q5", type: "mc", slide: 7, text: "A CT scanner exports images of a patient. Which extension will the files most likely have?",
+   options: [".docx", ".dcm", ".xlsx", ".mp3"], answer: 1,
+   why: ".dcm is DICOM, the standard format for medical images." },
+ { id: "q6", type: "mc", slide: 7, text: "Which line is a correct Windows path to a file?",
+   options: ["Documents > report", "C:\\Users\\Student\\Documents\\report.docx", "report.docx\\Documents\\C:", "www.report.docx"], answer: 1,
+   why: "A path goes from the drive through the folders to the file name with its extension." },
+ { id: "q7", type: "mc", slide: 8, text: "Which file name follows the rule from the lesson?",
+   options: ["final final 2.docx", "New Document (3).docx", "2026-09-02_Informatics_Lesson01_Ivanova.docx", "лаба.docx"], answer: 2,
+   why: "Date (year-month-day), subject, topic, surname — files sort correctly and are easy to find." },
+ { id: "q8", type: "mc", slide: 9, text: "Where is a file stored when you save it to Google Drive?",
+   options: ["Only in the phone's memory", "On Google's servers, available from any device with internet", "In the computer's RAM", "On a USB flash drive"], answer: 1,
+   why: "Cloud storage keeps files on the provider's servers, so you can open them anywhere." },
+ { id: "q9", type: "mc", slide: 10, text: "You deleted a paragraph by mistake. Which shortcut brings it back?",
+   options: ["Ctrl + Z", "Ctrl + S", "Ctrl + C", "Alt + Tab"], answer: 0,
+   why: "Ctrl + Z is Undo." },
+ { id: "q10", type: "mc", slide: 11, text: "A colleague asks you to make a patient's X-ray smaller using a free public converter website. What is the right action?",
+   options: ["Upload it — the site is popular", "Send it to your personal messenger first", "Do not upload patient data to public sites; use the hospital's approved system or ask IT", "Rename the file and then upload it"], answer: 2,
+   why: "Patient data must stay in approved systems. Public websites can keep copies of uploaded files." }
+];
+
+const PRACTICE = {
+  A: [
+    "In File Explorer turn on View → Show → File name extensions.",
+    "In Documents create the folder Informatics and inside it the folder Lesson01.",
+    "Create a document, type three sentences about why a doctor needs a computer and save it (Ctrl + S) in Lesson01 using the naming rule.",
+    "Copy the file (Ctrl + C, Ctrl + V), rename the copy, then move it (Ctrl + X) to a new folder Archive.",
+    "Delete the copy, then restore it from the Recycle Bin.",
+    "Find your file with the search box in File Explorer (open Explorer with Win + E).",
+    "Compress the Lesson01 folder into a ZIP file.",
+    "Lock the screen with Win + L and unlock it."
+  ],
+  B: [
+    "Do all level A tasks quickly, then continue.",
+    "Upload the Lesson01 folder to Google Drive or OneDrive.",
+    "Share one file with the teacher with “Viewer” (read-only) access.",
+    "Open Settings → System → About and write down the processor, RAM and Windows version; check free space on drive C:.",
+    "Open Task Manager (Ctrl + Shift + Esc) and find the program that uses the most memory.",
+    "Help a level A classmate finish their tasks."
+  ]
+};
+
+/* Questions from students with the teacher's answers (shown on the Finish screen) */
+const FAQ = [
+ { q: "Why should I follow the rule year-month-day_topic_surname for file names? Is it mandatory?",
+   a: [
+    "<b>Yes — for every file you submit in this course it is required.</b> Task A3 of the practical card checks it, and the course project files must use it too. For your personal files it is strongly recommended.",
+    "<b>Why year-month-day?</b> Computers sort file names letter by letter. <code>2026-09-02</code> and <code>2026-10-15</code> sort in the correct order; <code>02.09.2026</code> and <code>15.10.2026</code> do not. This is the international standard ISO 8601.",
+    "<b>Why the topic and the surname?</b> Your teacher receives more than a hundred files from one group. <code>2026-09-02_BMI_Sharma.xlsx</code> says what it is and whose it is without opening it. <code>New Document (3).docx</code> or <code>final final 2.docx</code> say nothing.",
+    "<b>Why underscores instead of spaces?</b> Spaces and special symbols can break links, uploads and some programs; underscores are safe everywhere.",
+    "<b>In the hospital</b> documents also follow naming rules, so that the right report of the right patient is found quickly. One rule: <b>never put a patient's name in a file name</b> — use an anonymous ID."
+   ] }
+];
+
+/* ======================= TEACHER CONTENT ======================= */
+const CLASS_PLAN = [
+ { from: 0, to: 5, title: "Организационная часть", body: "Отметьте присутствующих. Откройте вкладку «Результаты»: кто прошёл урок дома, средний балл, самый трудный вопрос.",
+   say: "Good morning. Before class you studied Lesson 1 online. Let's see how it went.",
+   tip: "Если половина группы не прошла урок — дайте 10 минут на прохождение в классе, уровень A начинает с практики вместе с вами." },
+ { from: 5, to: 15, title: "Разбор трудных вопросов", body: "Покажите на экране 2–3 вопроса с самым низким процентом (вкладка «Результаты»). Откройте соответствующий слайд во вкладке «Слайды и шпаргалка».",
+   say: "Question number … was the hardest for the group. Let's look at it together. Who can explain the right answer?",
+   tip: "Пусть объясняет студент, который ответил правильно. Вы только уточняете." },
+ { from: 15, to: 25, title: "Короткое повторение", body: "Пройдите ключевые слайды 4, 7 и 9 (компоненты, файлы, облако). Используйте вопросы ASK из шпаргалки.",
+   say: "Three ideas are the base for the whole course: what is inside the computer, how files are organised, and where files are stored.",
+   tip: "Не читайте слайды. Задавайте вопросы и давайте студентам отвечать." },
+ { from: 25, to: 75, title: "Практическая работа", body: "Студенты выполняют карточку уровня A или B на компьютере. Сильные студенты (B) помогают соседям уровня A.",
+   say: "Open your task card. Level A: tasks 1 to 8. Level B: tasks 1 to 6. When you finish a task, tick it. Raise your hand if you are stuck for more than two minutes.",
+   tip: "Обходите класс. Проверяйте: включены ли расширения (A1), правильное ли имя файла (A3), открыт ли доступ «только просмотр» (B3)." },
+ { from: 75, to: 85, title: "Контроль: выходной опрос", body: "Три быстрых устных вопроса всей группе (ответы ниже).",
+   say: "Three quick questions. Answer together. 1) The power went off — what happens to unsaved work? 2) What is .dcm? 3) Which shortcut locks the screen?",
+   tip: "Ответы: 1) пропадает, она была в RAM; 2) медицинское изображение DICOM; 3) Win + L." },
+ { from: 85, to: 90, title: "Итоги и домашнее задание", body: "Отметьте успехи группы. Домашнее задание: разложить свои учебные файлы по правилу именования; по желанию включить двухфакторную аутентификацию в своей почте; пройти онлайн-урок 2 до следующего занятия.",
+   say: "Well done today. At home, organise your own study files with the naming rule. Before the next class, complete Lesson 2 online.",
+   tip: "Напомните: оценка за занятие — до 5 баллов (тест дома до 2 баллов, практика до 3)." }
+];
+
+/* ======================= STATE ======================= */
+const KEY = "inf-l1-state";
+const blank = () => ({ step: 0, name: "", group: "", self: [false, false, false], level: "", slide: 0, seen: [0],
+  answers: {}, checked: false, score: 0, attempts: 0, done: {}, reflection: "", submitted: false, code: "" });
+let S = blank();
+try { const raw = localStorage.getItem(KEY); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+
+/* name and group are remembered for all lessons on this device */
+const PROFILE = (() => { try { return JSON.parse(localStorage.getItem("inf-profile")) || {}; } catch (e) { return {}; } })();
+const saveProfile = (name, group) => { try { localStorage.setItem("inf-profile", JSON.stringify({ name, group })); } catch (e) {} };
+const STEPS = ["Start", "Slides", "Check", "Practice", "Finish"];
+const app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let DB = null, USER = null, UID = null, IS_OWNER = false, SAVE_STATE = "pending";
+/* teacher access outside claude.ai: a PIN (only keeps casual visitors out — the page source is public) */
+const PIN_HASH = "6105baf5e22f18623c5be2a517bc94206ee53fa8a32e0e67b5a949739be99120";
+/* Google Sheet web app that collects results (Apps Script). Empty = no automatic collection. */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwrK_rkHUwYUT0Nb4ZwIUozR9pgRIm3_4BYaVELARQsRXUdfo_MF2y9_b_2ll8A_Icl/exec";
+let IS_TEACHER = false;
+try { IS_TEACHER = localStorage.getItem("inf-teacher") === PIN_HASH; } catch (e) {}
+async function sha(s) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+(async () => {
+  try {
+    USER = await window.claude?.use?.("user");
+    IS_OWNER = USER ? await USER.isOwner() : false;
+    if (USER) UID = await USER.id();
+    DB = await window.claude?.use?.("db");
+  } catch (e) { DB = null; }
+  if ((!DB || !UID) && !SHEET_URL) SAVE_STATE = "offline";
+  if (IS_OWNER) IS_TEACHER = true;
+  document.getElementById("teacherLink").hidden = !IS_TEACHER;
+  route();
+})();
+
+/* ======================= STUDENT VIEW ======================= */
+function renderSteps(active) {
+  const ol = document.getElementById("steps");
+  ol.hidden = active < 0;
+  ol.innerHTML = STEPS.map((s, i) => `<li class="${i < S.step ? "done" : ""} ${i === active ? "now" : ""}">${i + 1}<span class="of">/${STEPS.length}</span>. ${s}</li>`).join("");
+}
+
+function renderStudent() {
+  renderSteps(S.step);
+  [viewStart, viewSlides, viewQuiz, viewPractice, viewFinish][S.step]();
+  window.scrollTo(0, 0);
+}
+
+function viewStart() {
+  const sa = ["I can create, rename and move folders and files.", "I know at least five keyboard shortcuts.", "I have used Google Drive or OneDrive."];
+  app.innerHTML = `<section class="stack">
+    <div class="hero">
+      <p class="eyebrow">Computer Science · Lesson 1</p>
+      <h2>${LESSON.title}</h2>
+      <p>Learn online before class, check yourself, then practise in the computer lab.</p>
+      <div class="meta"><span>${SLIDES.length} slides</span><span>10 questions</span><span>Task card A / B</span><span>≈ 20 min</span></div>
+    </div>
+    <div class="sheet stack">
+    <p class="eyebrow">Before you start</p>
+    <p class="note">This lesson takes about 20 minutes. Your progress is kept in this browser, so you can stop and continue later.</p>
+    <div class="grid2">
+      <label class="field" for="fName">Full name<input type="text" id="fName" autocomplete="name" value="${esc(S.name || PROFILE.name || "")}" placeholder="e.g. Aigul Ivanova"></label>
+      <label class="field" for="fGroup">Group<input type="text" id="fGroup" value="${esc(S.group || PROFILE.group || "")}" placeholder="e.g. 12"></label>
+    </div>
+    <div class="stack" style="gap:8px">
+      <p><b>Rate yourself honestly.</b> Tick what is true for you:</p>
+      ${sa.map((t, i) => `<label class="check" for="sa${i}"><input type="checkbox" id="sa${i}" ${S.self[i] ? "checked" : ""}>${t}</label>`).join("")}
+    </div>
+    <div class="row"><button class="btn" id="go">Start the lesson</button><span class="note" id="startMsg"></span></div>
+    </div>
+  </section>`;
+  document.getElementById("go").onclick = () => {
+    const n = document.getElementById("fName").value.trim(), g = document.getElementById("fGroup").value.trim();
+    if (!n || !g) { document.getElementById("startMsg").textContent = "Enter your full name and group to continue."; return; }
+    S.name = n; S.group = g; saveProfile(n, g); S.self = [0, 1, 2].map(i => document.getElementById("sa" + i).checked);
+    S.level = S.self.filter(Boolean).length >= 2 ? "B" : "A";
+    S.step = 1; save(); renderStudent(); pushResult();
+  };
+}
+
+function slideHTML(i) {
+  return `<article class="slide" aria-label="Slide ${i + 1} of ${SLIDES.length}"><span class="no">${String(i + 1).padStart(2, "0")} / ${SLIDES.length}</span>${SLIDES[i].html}</article>`;
+}
+
+function viewSlides() {
+  const i = S.slide;
+  app.innerHTML = `<section class="deck">
+    ${slideHTML(i)}
+    <div class="deck-nav">
+      <button class="btn ghost" id="prev" ${i === 0 ? "disabled" : ""}>← Back</button>
+      <div class="dots" aria-hidden="true">${SLIDES.map((_, k) => `<span class="${k === i ? "cur" : S.seen.includes(k) ? "seen" : ""}"></span>`).join("")}</div>
+      ${i < SLIDES.length - 1 ? `<button class="btn" id="next">Next →</button>` : `<button class="btn" id="toQuiz">Check yourself →</button>`}
+    </div>
+    <p class="note">Use the arrow keys or swipe. Tap the underlined words for explanations.</p>
+  </section>`;
+  const go = d => { S.slide = Math.max(0, Math.min(SLIDES.length - 1, S.slide + d)); if (!S.seen.includes(S.slide)) S.seen.push(S.slide); save(); viewSlides(); window.scrollTo(0, 0); };
+  const p = document.getElementById("prev"), n = document.getElementById("next"), q = document.getElementById("toQuiz");
+  if (p) p.onclick = () => go(-1);
+  if (n) n.onclick = () => go(1);
+  if (q) q.onclick = () => { S.step = 2; save(); renderStudent(); };
+  slideNav = go;
+}
+let slideNav = null;
+document.addEventListener("keydown", e => {
+  const k = e.key.toLowerCase();
+  if (e.ctrlKey || e.metaKey) {
+    const row = document.querySelector(`#keys .keyrow[data-k="${k}"]`);
+    if (row) { row.classList.add("hit"); if (k === "s" || k === "f") e.preventDefault(); }
+    return;
+  }
+  if (location.hash !== "#teacher" && S.step === 1 && slideNav && !/input|textarea|select/i.test(document.activeElement.tagName)) {
+    if (e.key === "ArrowRight") slideNav(1);
+    if (e.key === "ArrowLeft") slideNav(-1);
+  }
+});
+let tx = null;
+document.addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener("touchend", e => {
+  if (tx === null || S.step !== 1 || location.hash === "#teacher" || !slideNav) return;
+  const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 70 && e.target.closest(".slide")) slideNav(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+function isRight(q, a) {
+  if (a === undefined) return false;
+  if (q.type === "match") return Array.isArray(a) && q.answer.every((v, k) => Number(a[k]) === v);
+  return Number(a) === q.answer;
+}
+
+function viewQuiz() {
+  const checked = S.checked;
+  app.innerHTML = `<section class="stack">
+    ${checked ? "" : `<p class="qcount" id="qcount"></p>`}
+    <div class="sheet stack">
+      <p class="eyebrow">Check yourself · attempt ${S.attempts + (checked ? 0 : 1)}</p>
+      <h2 style="font-size:clamp(24px,3.6vw,34px)">10 questions</h2>
+      <p class="note">You need ${LESSON.pass}% (7 correct) to open the practical task. After checking you will see an explanation for every question.</p>
+    </div>
+    ${QUESTIONS.map((q, n) => {
+      const a = S.answers[q.id];
+      let body = "";
+      if (q.type === "mc") {
+        body = q.options.map((o, k) => {
+          let cls = "";
+          if (checked) { if (k === q.answer) cls = "right"; else if (Number(a) === k) cls = "wrong"; }
+          return `<label class="opt ${cls}" for="${q.id}_${k}"><input type="radio" name="${q.id}" id="${q.id}_${k}" value="${k}" ${Number(a) === k && a !== undefined ? "checked" : ""} ${checked ? "disabled" : ""}>${esc(o)}</label>`;
+        }).join("");
+      } else {
+        body = `<div class="match">${q.items.map((it, k) => {
+          const v = a ? a[k] : "";
+          const mark = checked ? (Number(v) === q.answer[k] ? ' <span class="good">✓</span>' : ` <span class="bad">✗ ${q.choices[q.answer[k]]}</span>`) : "";
+          return `<label for="${q.id}_${k}"><span>${esc(it)}${mark}</span><select id="${q.id}_${k}" data-q="${q.id}" data-k="${k}" ${checked ? "disabled" : ""}><option value="">Choose…</option>${q.choices.map((c, j) => `<option value="${j}" ${String(v) === String(j) ? "selected" : ""}>${c}</option>`).join("")}</select></label>`;
+        }).join("")}</div>`;
+      }
+      const res = checked ? `<p class="explain">${isRight(q, a) ? '<span class="good">Correct.</span>' : '<span class="bad">Not quite.</span>'} ${esc(q.why)} <span class="note">(Slide ${q.slide})</span></p>` : "";
+      return `<fieldset class="q" id="f_${q.id}"><legend class="num">Question ${n + 1} of ${QUESTIONS.length}</legend><h3>${esc(q.text)}</h3>${body}${res}</fieldset>`;
+    }).join("")}
+    <div class="sheet stack" id="quizEnd"></div>
+  </section>`;
+  const answered = q => q.type === "mc" ? S.answers[q.id] !== undefined : Array.isArray(S.answers[q.id]) && q.items.every((_, k) => S.answers[q.id][k] !== undefined && S.answers[q.id][k] !== "");
+  const updCount = () => { const c = document.getElementById("qcount"); if (!c) return; const n = QUESTIONS.filter(answered).length; c.textContent = `Answered ${n} / ${QUESTIONS.length}`; c.classList.toggle("all", n === QUESTIONS.length); QUESTIONS.forEach(q => { if (answered(q)) document.getElementById("f_" + q.id)?.classList.remove("missing"); }); };
+  app.querySelectorAll('input[type=radio]').forEach(r => r.onchange = () => { S.answers[r.name] = Number(r.value); save(); updCount(); document.getElementById("f_" + r.name)?.classList.remove("missing"); });
+  updCount();
+  app.querySelectorAll('select[data-q]').forEach(s => s.onchange = () => {
+    const q = s.dataset.q; const arr = Array.isArray(S.answers[q]) ? S.answers[q].slice() : [];
+    arr[Number(s.dataset.k)] = s.value === "" ? "" : Number(s.value); S.answers[q] = arr; save(); updCount();
+  });
+  const end = document.getElementById("quizEnd");
+  if (!checked) {
+    end.innerHTML = `<div class="row"><button class="btn" id="check">Check my answers</button><span class="note" id="qMsg"></span></div>`;
+    document.getElementById("check").onclick = () => {
+      const missing = QUESTIONS.filter(q => q.type === "mc" ? S.answers[q.id] === undefined : !(Array.isArray(S.answers[q.id]) && q.items.every((_, k) => S.answers[q.id][k] !== undefined && S.answers[q.id][k] !== "")));
+      if (missing.length) { document.getElementById("qMsg").textContent = `Answer all questions first (${missing.length} left).`; missing.forEach(q => document.getElementById("f_" + q.id)?.classList.add("missing")); document.getElementById("f_" + missing[0].id)?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      S.attempts += 1; S.checked = true;
+      S.score = Math.round(100 * QUESTIONS.filter(q => isRight(q, S.answers[q.id])).length / QUESTIONS.length);
+      S.best = Math.max(S.best || 0, S.score);
+      save(); viewQuiz(); pushResult();
+      document.getElementById("quizEnd").scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+  } else {
+    const pass = S.score >= LESSON.pass;
+    const wrongSlides = [...new Set(QUESTIONS.filter(q => !isRight(q, S.answers[q.id])).map(q => q.slide))].sort((a, b) => a - b);
+    end.innerHTML = `<p class="eyebrow">Your result</p><p class="score">${S.score}%</p>
+      ${pass ? `<div class="banner ok">Well done. Your practical task for the computer lab is open.</div>
+        <div class="row"><button class="btn" id="toPractice">Open my practical task →</button></div>`
+      : `<div class="banner bad">You need ${LESSON.pass}%. Review slides ${wrongSlides.join(", ")} and try again — the questions stay the same.</div>
+        <div class="row"><button class="btn" id="review">Review the slides</button><button class="btn ghost" id="retry">Try again</button></div>`}`;
+    if (pass) document.getElementById("toPractice").onclick = () => { S.step = 3; save(); renderStudent(); };
+    else {
+      document.getElementById("review").onclick = () => { S.checked = false; S.step = 1; S.slide = (wrongSlides[0] || 1) - 1; save(); renderStudent(); };
+      if (S.submitted) document.getElementById("retry").hidden = true;
+      document.getElementById("retry").onclick = () => { S.checked = false; S.answers = {}; save(); viewQuiz(); window.scrollTo(0, 0); };
+    }
+  }
+}
+
+function viewPractice() {
+  const lv = S.level || "A";
+  const list = PRACTICE[lv];
+  app.innerHTML = `<section class="sheet stack">
+    <p class="eyebrow">Practical task · in the computer lab</p>
+    <h2 style="font-size:clamp(24px,3.6vw,34px)">Your task card <span class="level">Level ${lv}</span></h2>
+    <p class="note">Bring this card to class: open this page on the lab computer or your phone. Tick each task when you finish it. ${lv === "A" ? "If you finish early, try level B." : "You can also look at level A."}</p>
+    <div class="stack" style="gap:8px">${list.map((t, k) => `<label class="check" for="p${k}"><input type="checkbox" id="p${k}" ${S.done[lv + k] ? "checked" : ""}><span><b>${lv}${k + 1}.</b> ${esc(t)}</span></label>`).join("")}</div>
+    <div class="row"><button class="btn ghost" id="swap">Show level ${lv === "A" ? "B" : "A"}</button><button class="btn" id="toFinish">Finish the lesson →</button></div>
+  </section>`;
+  list.forEach((_, k) => document.getElementById("p" + k).onchange = e => { S.done[lv + k] = e.target.checked; save(); });
+  document.getElementById("swap").onclick = () => { S.level = lv === "A" ? "B" : "A"; save(); viewPractice(); };
+  document.getElementById("toFinish").onclick = () => { S.step = 4; save(); renderStudent(); };
+}
+
+function makeCode() { return codeFor(S.name, S.group, S.best || S.score); }
+function codeFor(name, group, score) {
+  const src = `${name}|${group}|${score}|${LESSON.id}`;
+  let h = 0; for (const ch of src) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  return (h.toString(36).toUpperCase() + "000000").slice(0, 6);
+}
+
+
+function faqHTML() {
+  if (!FAQ.length) return "";
+  return `<section class="sheet stack"><p class="eyebrow">Your questions — answered</p>
+    <h2 style="font-size:clamp(22px,3.2vw,30px)">Questions from students</h2>
+    ${FAQ.map(f => `<details class="faq" open><summary><b>${esc(f.q)}</b></summary><div class="stack" style="gap:10px;margin-top:10px">${f.a.map(p => `<p>${p}</p>`).join("")}</div></details>`).join("")}
+  </section>`;
+}
+function viewFinish() {
+  app.innerHTML = `<section class="stack"><section class="sheet stack">
+    <p class="eyebrow">Finish</p>
+    <h2 style="font-size:clamp(24px,3.6vw,34px)">One last question</h2>
+    <label class="field" for="refl">What was difficult or unclear in this lesson?<textarea id="refl" placeholder="For example: I did not understand the difference between cloud and local storage.">${esc(S.reflection)}</textarea></label>
+    <div class="row"><button class="btn" id="send">Send to my teacher</button><span class="note" id="sendMsg"></span></div>
+    <div id="cardBox"></div>
+  </section>${faqHTML()}</section>`;
+  if (S.submitted) {
+    document.getElementById("send").hidden = true;
+    document.getElementById("refl").disabled = true;
+    document.getElementById("sendMsg").textContent = "Already sent. Your result can be sent only once.";
+  }
+  document.getElementById("send").onclick = async () => {
+    if (S.submitted) return;
+    S.reflection = document.getElementById("refl").value.trim(); S.submitted = true; S.code = makeCode(); save();
+    const ok = await pushResult();
+    if (ok) { S.sent = true; save(); }
+    document.getElementById("send").hidden = true; document.getElementById("refl").disabled = true;
+    document.getElementById("sendMsg").textContent = S.locked ? "This result was already sent earlier — it can be sent only once." : ok ? "Sent. Your teacher can see your result." : "";
+    showCard(ok);
+  };
+  if (S.submitted) showCard(S.sent || SAVE_STATE === "saved");
+  /* finished before the results sheet was connected: send now (the sheet keeps only the first final result) */
+  if (S.submitted && !S.sent && SHEET_URL) pushResult().then(ok => { if (ok) { S.sent = true; save(); if (S.step === 4 && location.hash !== "#teacher") showCard(true); } });
+}
+
+function showCard(saved) {
+  const box = document.getElementById("cardBox");
+  box.innerHTML = `${saved ? "" : `<div class="banner warn">Your result could not be sent automatically from this device. Show this card to your teacher at the start of class, or send a screenshot.</div>`}
+    <div class="card"><p class="eyebrow">Lesson 1 · result card</p>
+      <p><b>${esc(S.name)}</b>, group ${esc(S.group)}</p>
+      <p>Test: <b>${S.best || S.score}%</b> · attempts: ${S.attempts} · level ${esc(S.level)}</p>
+      <p class="note">Check code</p><p class="code">${S.code || makeCode()}</p></div>
+    <div class="row"><button class="btn ghost" id="restart">Start again (new student on this device)</button></div>`;
+  document.getElementById("restart").onclick = e => {
+    if (!e.target.dataset.sure) { e.target.dataset.sure = "1"; e.target.textContent = "Tap again to erase this lesson on this device"; e.target.style.color = "var(--bad)"; return; }
+    S = blank(); save(); renderStudent();
+  };
+}
+
+async function pushResult() {
+  if (!S.name || ((!DB || !UID) && !SHEET_URL)) { SAVE_STATE = "offline"; return false; }
+  const body = { lesson: LESSON.id, name: S.name.slice(0, 120), group: S.group.slice(0, 40), level: S.level, self: S.self,
+    step: S.step, score: S.score, best: S.best || 0, attempts: S.attempts, answers: S.answers,
+    practice: Object.keys(S.done).filter(k => S.done[k]), reflection: S.reflection.slice(0, 2000), submitted: S.submitted,
+    code: S.code || makeCode(), updatedAt: new Date().toISOString() };
+  if (DB && UID) {
+    try { await DB.doc("results/" + UID).set(body); SAVE_STATE = "saved"; return true; }
+    catch (e) { SAVE_STATE = "offline"; return false; }
+  }
+  try {
+    const r = await fetch(SHEET_URL, { method: "POST", body: JSON.stringify(body) });
+    const j = await r.json();
+    if (j.error === "already submitted") { S.submitted = true; S.locked = true; save(); SAVE_STATE = "saved"; return true; }
+    SAVE_STATE = j.ok ? "saved" : "offline"; return !!j.ok;
+  } catch (e) { SAVE_STATE = "offline"; return false; }
+}
+
+/* ======================= TEACHER VIEW ======================= */
+let tTab = "plan", tSlide = 0, timerStart = null, timerId = null, results = [], unsub = null, groupFilter = "";
+
+function renderTeacher() {
+  renderSteps(-1);
+  if (!IS_TEACHER) {
+    app.innerHTML = `<section class="sheet stack" style="max-width:520px;margin:0 auto">
+      <p class="eyebrow">Teacher · Преподаватель</p><h2>Панель преподавателя</h2>
+      <label class="field" for="pin">PIN-код<input type="password" id="pin" inputmode="numeric" autocomplete="off"></label>
+      <div class="row"><button class="btn" id="pinGo">Войти</button><span class="note" id="pinMsg"></span></div>
+      <p class="note"><a href="#lesson">← Student view / к уроку</a></p></section>`;
+    const go = async () => {
+      const h = await sha("ihsm-inf:" + document.getElementById("pin").value.trim());
+      if (h !== PIN_HASH) { document.getElementById("pinMsg").textContent = "Неверный PIN."; return; }
+      IS_TEACHER = true; try { localStorage.setItem("inf-teacher", PIN_HASH); localStorage.setItem("inf-teacher-key", document.getElementById("pin").value.trim()); } catch (e) {}
+      document.getElementById("teacherLink").hidden = false; renderTeacher();
+    };
+    document.getElementById("pinGo").onclick = go;
+    document.getElementById("pin").onkeydown = e => { if (e.key === "Enter") go(); };
+    return;
+  }
+  app.innerHTML = `<section>
+    <div class="row" style="justify-content:space-between;margin-bottom:10px">
+      <div><p class="eyebrow">Панель преподавателя</p><h2 style="font-size:28px">Урок 1. ${LESSON.title}</h2></div>
+      <span class="row"><a href="../teacher/">Журнал всех уроков</a><a href="#lesson">Открыть урок как студент</a><button class="btn ghost" id="logout" style="padding:7px 14px">Выйти</button></span>
+    </div>
+    <div class="tabs" role="tablist">
+      ${[["plan", "План занятия (90 мин)"], ["slides", "Слайды и шпаргалка"], ["results", "Результаты"], ["practice", "Практика: что проверять"]].map(([k, l]) =>
+        `<button role="tab" aria-selected="${tTab === k}" data-tab="${k}">${l}</button>`).join("")}
+    </div>
+    <div id="tBody"></div>
+  </section>`;
+  app.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { tTab = b.dataset.tab; renderTeacher(); });
+  document.getElementById("logout").onclick = () => { try { localStorage.removeItem("inf-teacher"); localStorage.removeItem("inf-teacher-key"); } catch (e) {} sheetRows = null; IS_TEACHER = IS_OWNER; document.getElementById("teacherLink").hidden = !IS_TEACHER; location.hash = "#lesson"; };
+  ({ plan: tPlan, slides: tSlides, results: tResults, practice: tPractice })[tTab]();
+  subscribeResults();
+}
+
+function elapsedMin() { return timerStart ? (Date.now() - timerStart) / 60000 : -1; }
+function tPlan() {
+  const m = elapsedMin();
+  const b = document.getElementById("tBody");
+  b.innerHTML = `<div class="row" style="margin-bottom:14px">
+      <span class="clock" id="clock">${fmt(m)}</span>
+      <button class="btn" id="tStart">${timerStart ? "Сбросить таймер" : "Начать занятие"}</button>
+      <span class="note">Таймер подсвечивает текущий этап. «SAY» — что сказать студентам по-английски, «Совет» — для вас.</span>
+    </div>
+    <div class="plan">${CLASS_PLAN.map(p => `<div class="phase ${m >= p.from && m < p.to ? "now" : ""}">
+      <div class="t">${p.from}–${p.to} мин</div>
+      <div class="stack" style="gap:8px"><h3>${p.title}</h3><p>${p.body}</p><p class="say">${p.say}</p><p class="tip">${p.tip}</p></div></div>`).join("")}</div>`;
+  document.getElementById("tStart").onclick = () => {
+    if (timerStart) { timerStart = null; clearInterval(timerId); } else { timerStart = Date.now(); clearInterval(timerId); timerId = setInterval(() => { if (tTab === "plan" && location.hash === "#teacher") tPlan(); }, 30000); }
+    tPlan();
+  };
+}
+function fmt(m) { if (m < 0) return "00:00"; const t = Math.floor(m * 60); return String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0"); }
+
+function tSlides() {
+  const s = SLIDES[tSlide];
+  const qs = QUESTIONS.filter(q => q.slide === tSlide + 1).map(q => QUESTIONS.indexOf(q) + 1);
+  document.getElementById("tBody").innerHTML = `<div class="presenter">
+    <div class="stack">
+      <div id="tSlideBox">${slideHTML(tSlide)}</div>
+      <div class="deck-nav">
+        <button class="btn ghost" id="tp" ${tSlide === 0 ? "disabled" : ""}>← Назад</button>
+        <select id="tJump" aria-label="Перейти к слайду">${SLIDES.map((x, k) => `<option value="${k}" ${k === tSlide ? "selected" : ""}>${k + 1}. ${x.title}</option>`).join("")}</select>
+        <button class="btn ghost" id="tn" ${tSlide === SLIDES.length - 1 ? "disabled" : ""}>Вперёд →</button>
+        <button class="btn ghost" id="tFull">Проектор (← →)</button>
+      </div>
+    </div>
+    <aside class="notes">
+      <p class="eyebrow">Слайд ${tSlide + 1} из ${SLIDES.length}${s.sec ? ` · около ${s.sec / 60} мин на повторение` : ""}</p>
+      <p class="say">${s.say}</p>
+      <p class="ask">${s.ask}</p>
+      <p class="tip">${s.tip}</p>
+      ${qs.length ? `<p class="note">Этот слайд проверяют вопросы теста: ${qs.map(n => "№" + n).join(", ")}.</p>` : ""}
+    </aside></div>`;
+  const go = k => { tSlide = Math.max(0, Math.min(SLIDES.length - 1, k)); tSlides(); };
+  document.getElementById("tp").onclick = () => go(tSlide - 1);
+  document.getElementById("tn").onclick = () => go(tSlide + 1);
+  document.getElementById("tJump").onchange = e => go(Number(e.target.value));
+  document.getElementById("tFull").onclick = () => { const box = document.getElementById("tSlideBox"); box.insertAdjacentHTML("beforeend", `<span class="fs-hint">← → slides · Esc exit</span>`); box.requestFullscreen?.().catch(() => {}); };
+}
+
+function subscribeResults() {
+  if (unsub || !DB) return;
+  try {
+    unsub = DB.collection("results").onSnapshot(snap => {
+      results = snap.docs.map(d => d.data()).filter(Boolean);
+      if (location.hash === "#teacher" && tTab === "results") tResults();
+    }, () => { unsub = null; });
+  } catch (e) { unsub = null; }
+}
+
+let sheetRows = null, sheetErr = "";
+async function loadSheet() {
+  let key = ""; try { key = localStorage.getItem("inf-teacher-key") || ""; } catch (e) {}
+  if (!key) { sheetErr = "nokey"; return; }
+  try {
+    const r = await fetch(SHEET_URL + "?lesson=" + LESSON.id + "&key=" + encodeURIComponent(key));
+    const j = await r.json();
+    if (!j.ok) { sheetErr = j.error || "error"; return; }
+    /* one record per student: the latest row wins (duplicates in the sheet do not change the statistics) */
+    const latest = new Map(), nk = r => (String(r.name) + "|" + String(r.group)).toLowerCase().replace(/\s+/g, " ").trim();
+    for (const r of j.rows) { const k = nk(r), o = latest.get(k); if (!o || new Date(r.updatedAt) >= new Date(o.updatedAt)) latest.set(k, r); }
+    sheetErr = ""; sheetRows = [...latest.values()]; results = sheetRows;
+  } catch (e) { sheetErr = "network"; }
+}
+function tResults() {
+  const b = document.getElementById("tBody");
+  if (!DB && SHEET_URL && sheetRows === null) {
+    if (sheetErr === "nokey" || sheetErr === "wrong key") {
+      b.innerHTML = `<div class="sheet stack" style="max-width:520px"><p>Чтобы загрузить результаты из Google Таблицы, введите PIN ещё раз.</p>
+        <label class="field" for="pin2">PIN-код<input type="password" id="pin2" inputmode="numeric"></label>
+        <div class="row"><button class="btn" id="pin2Go">Загрузить</button></div></div>`;
+      document.getElementById("pin2Go").onclick = () => { try { localStorage.setItem("inf-teacher-key", document.getElementById("pin2").value.trim()); } catch (e) {} sheetErr = ""; tResults(); };
+      return;
+    }
+    if (sheetErr === "network") { b.innerHTML = `<div class="banner bad">Не удалось связаться с Google Таблицей. Проверьте интернет и нажмите вкладку «Результаты» ещё раз.</div>`; sheetErr = ""; return; }
+    b.innerHTML = `<p class="note">Загружаю результаты из Google Таблицы…</p>`;
+    loadSheet().then(() => { if (tTab === "results" && location.hash === "#teacher") tResults(); });
+    return;
+  }
+  if (!DB && !SHEET_URL) {
+    b.innerHTML = `<div class="stack">
+      <div class="banner warn">На этом сайте результаты не собираются автоматически. В конце урока студент получает <b>карточку результата</b> с проверочным кодом и показывает её вам или присылает скриншот.</div>
+      <div class="sheet stack"><p class="eyebrow">Проверка карточки студента</p>
+        <p class="note">Введите данные с карточки точно так, как на ней написано. Если код совпал — карточка настоящая.</p>
+        <div class="grid2">
+          <label class="field" for="cName">Имя (Full name)<input type="text" id="cName"></label>
+          <label class="field" for="cGroup">Группа<input type="text" id="cGroup"></label>
+          <label class="field" for="cScore">Балл теста, %<input type="text" id="cScore" inputmode="numeric"></label>
+          <label class="field" for="cCode">Код с карточки<input type="text" id="cCode" style="text-transform:uppercase"></label>
+        </div>
+        <div class="row"><button class="btn" id="cGo">Проверить</button><span id="cRes"></span></div></div></div>`;
+    document.getElementById("cGo").onclick = () => {
+      const v = id => document.getElementById(id).value.trim();
+      const ok = codeFor(v("cName"), v("cGroup"), Number(v("cScore"))) === v("cCode").toUpperCase();
+      const r = document.getElementById("cRes"); r.className = "pill " + (ok ? "ok" : "bad"); r.textContent = ok ? "Код верный" : "Код не совпадает";
+    };
+    return;
+  }
+  const groups = [...new Set(results.map(r => r.group).filter(Boolean))].sort();
+  const rs = results.filter(r => !groupFilter || r.group === groupFilter);
+  const tested = rs.filter(r => r.attempts > 0);
+  const avg = tested.length ? Math.round(tested.reduce((a, r) => a + (r.best || 0), 0) / tested.length) : 0;
+  const passed = tested.filter(r => (r.best || 0) >= LESSON.pass).length;
+  const perQ = QUESTIONS.map((q, i) => {
+    const withA = tested.filter(r => r.answers && r.answers[q.id] !== undefined);
+    const ok = withA.filter(r => isRight(q, r.answers[q.id])).length;
+    return { n: i + 1, q, pct: withA.length ? Math.round(100 * ok / withA.length) : null };
+  });
+  const hard = perQ.filter(x => x.pct !== null).sort((a, b) => a.pct - b.pct).slice(0, 3);
+  b.innerHTML = `<div class="stack">
+    <div class="row" style="align-items:end"><label class="field" for="gF" style="min-width:200px">Группа<select id="gF"><option value="">Все группы</option>${groups.map(g => `<option ${g === groupFilter ? "selected" : ""}>${esc(g)}</option>`).join("")}</select></label>${SHEET_URL && !DB ? `<button class="btn ghost" id="reload">Обновить</button><span class="note">Данные из вашей Google Таблицы</span>` : ""}</div>
+    <div class="stats">
+      <div class="stat"><span class="note">Начали урок</span><b>${rs.length}</b></div>
+      <div class="stat"><span class="note">Прошли тест</span><b>${tested.length}</b></div>
+      <div class="stat"><span class="note">Набрали ${LESSON.pass}%+</span><b>${passed}</b></div>
+      <div class="stat"><span class="note">Средний лучший балл</span><b>${tested.length ? avg + "%" : "—"}</b></div>
+    </div>
+    ${hard.length ? `<div class="sheet stack"><p class="eyebrow">Разберите в начале пары</p>${hard.map(h => `<p><b>№${h.n}</b> — ${h.pct}% верно. ${esc(h.q.text)} <span class="note">(слайд ${h.q.slide})</span></p>`).join("")}</div>` : ""}
+    <div class="sheet stack"><p class="eyebrow">Верные ответы по вопросам</p>
+      <div class="tblwrap"><table class="res"><tr><th>№</th><th>Вопрос</th><th>Верно</th><th></th></tr>
+      ${perQ.map(x => `<tr><td>${x.n}</td><td>${esc(x.q.text)}</td><td>${x.pct === null ? "—" : x.pct + "%"}</td><td><div class="bar ${x.pct !== null && x.pct < 60 ? "low" : ""}"><i style="width:${x.pct || 0}%"></i></div></td></tr>`).join("")}
+      </table></div></div>
+    <div class="sheet stack"><p class="eyebrow">Студенты</p>
+      ${rs.length ? `<div class="tblwrap"><table class="res" id="resTable"><tr><th>Студент</th><th>Группа</th><th>Уровень</th><th>Этап</th><th>Лучший балл</th><th>Попытки</th><th>Практика</th><th>Что было трудно</th></tr></table></div>`
+        : `<p class="note">Пока нет результатов. Они появятся здесь, когда студенты начнут урок по вашей ссылке.</p>`}
+    </div>
+  </div>`;
+  document.getElementById("gF").onchange = e => { groupFilter = e.target.value; tResults(); };
+  const rl = document.getElementById("reload"); if (rl) rl.onclick = () => { sheetRows = null; tResults(); };
+  const tbl = document.getElementById("resTable");
+  if (tbl) rs.slice().sort((a, b) => String(a.group).localeCompare(String(b.group), undefined, { numeric: true }) || String(a.name).localeCompare(String(b.name))).forEach(r => {
+    const tr = document.createElement("tr");
+    const cells = [r.name, r.group, r.level, STEPS[r.step] || "", r.attempts ? (r.best || 0) + "%" : "—", r.attempts || 0, (r.practice || []).length, r.reflection || ""];
+    cells.forEach((v, k) => { const td = document.createElement("td"); if (k === 4 && r.attempts) { const s = document.createElement("span"); s.className = "pill " + ((r.best || 0) >= LESSON.pass ? "ok" : "bad"); s.textContent = v; td.append(s); } else td.textContent = v; tr.append(td); });
+    tbl.append(tr);
+  });
+}
+
+function tPractice() {
+  const checks = {
+    A: ["Расширения видны в Проводнике (видно .docx у файлов).", "Путь: Документы → Informatics → Lesson01.", "Имя файла по правилу: ГГГГ-ММ-ДД_Informatics_Lesson01_Фамилия.docx.", "Есть папка Archive с перемещённой копией.", "Файл восстановлен из Корзины.", "Студент нашёл файл поиском, открыл Проводник через Win + E.", "Есть ZIP-архив папки Lesson01.", "Студент показал блокировку Win + L."],
+    B: ["Все задания A выполнены.", "Папка Lesson01 есть в облаке.", "Вам пришёл доступ к файлу с правом «Читатель» (не «Редактор»).", "Записаны процессор, ОЗУ, версия Windows, свободное место на C:.", "Найден процесс с наибольшим расходом памяти в Диспетчере задач.", "Студент помог соседу уровня A."]
+  };
+  document.getElementById("tBody").innerHTML = `<div class="grid2">${["A", "B"].map(l => `<div class="sheet stack">
+    <h3>Уровень ${l}</h3>
+    ${PRACTICE[l].map((t, k) => `<div class="task"><p><b>${l}${k + 1}.</b> ${esc(t)}</p><p class="note">Проверить: ${checks[l][k]}</p></div>`).join("")}
+  </div>`).join("")}</div>
+  <p class="tip" style="margin-top:14px">Оценка практики — до 3 баллов: уровень A полностью — 2 балла, плюс 1 балл за 3 и более заданий уровня B или за помощь соседу.</p>`;
+}
+
+/* ======================= ROUTER + GLOSSARY ======================= */
+function route() {
+  if (location.hash === "#teacher") renderTeacher(); else renderStudent();
+}
+window.addEventListener("hashchange", route);
+
+const pop = document.getElementById("pop");
+document.addEventListener("click", e => {
+  const t = e.target.closest(".term");
+  if (!t) { pop.hidden = true; return; }
+  const g = GLOSSARY[t.dataset.term]; if (!g) return;
+  pop.innerHTML = `<b>${g[0]}</b>${g[1]}`;
+  pop.hidden = false;
+  const r = t.getBoundingClientRect();
+  const w = Math.min(340, window.innerWidth - 32);
+  pop.style.left = Math.max(16, Math.min(r.left, window.innerWidth - w - 16)) + "px";
+  pop.style.top = (r.bottom + 8 + 160 > window.innerHeight ? Math.max(8, r.top - 8 - pop.offsetHeight) : r.bottom + 8) + "px";
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") pop.hidden = true; });
+
+
+/* tap a screenshot to see it full size */
+document.addEventListener("click", e => {
+  const img = e.target.closest("figure.shot img");
+  if (img) {
+    const box = document.createElement("div");
+    box.className = "lightbox";
+    box.innerHTML = `<span class="x">✕ Close</span><img src="${img.src}" alt="${esc(img.alt)}">`;
+    if (window.innerWidth <= 900) box.querySelector(".x").insertAdjacentHTML("afterend", `<p style="color:#fff;font-size:13px;margin:0 0 8px">Swipe to move the picture</p>`);
+    box.onclick = () => box.remove();
+    document.body.append(box);
+    return;
+  }
+});
+document.addEventListener("keydown", e => {
+  const lb = document.querySelector(".lightbox");
+  if (lb && e.key === "Escape") { lb.remove(); return; }
+  /* projector mode: arrows change slides while the slide box is full screen */
+  const box = document.getElementById("tSlideBox");
+  if (box && document.fullscreenElement === box && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+    tSlide = Math.max(0, Math.min(SLIDES.length - 1, tSlide + (e.key === "ArrowRight" ? 1 : -1)));
+    box.innerHTML = slideHTML(tSlide) + `<span class="fs-hint">← → slides · Esc exit</span>`;
+  }
+});
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && location.hash === "#teacher" && tTab === "slides") tSlides(); });
+
+route();
+</script>
+</body>
+</html>

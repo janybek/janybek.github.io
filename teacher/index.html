@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Журнал преподавателя · Informatics · IHSM</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Visual language of ism.edu.kg: light grey canvas, white rounded cards with soft shadows,
+   graphite text, IHSM crimson for actions, pill-shaped buttons, SF-like type */
+:root {
+  --bg: #f5f5f7;
+  --sheet: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #d2d2d7;
+  --accent: #aa2927;      /* IHSM crimson */
+  --accent-ink: #ffffff;
+  --accent-soft: #f8e9e8;
+  --mark: #0066cc;        /* link blue */
+  --mark-soft: #e8f1fb;
+  --ok: #1d7a3a; --ok-soft: #e4f4e8;
+  --bad: #c0392b; --bad-soft: #fbe7e5;
+  --key: #f0f0f3; --key-edge: #c7c7cc;
+  --hero: #1d1d1f;
+  --shadow: 0 2px 12px rgb(0 0 0 / .07), 0 1px 2px rgb(0 0 0 / .04);
+  --f-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --r: 18px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #000000; --sheet: #1c1c1e; --ink: #f5f5f7; --muted: #a1a1a6; --line: #38383a;
+  --accent: #e5534b; --accent-ink: #ffffff; --accent-soft: #3a1c1b; --mark: #4ea1ff; --mark-soft: #102a45;
+  --ok: #5fd07c; --ok-soft: #12301b; --bad: #ff7b6e; --bad-soft: #3b1714; --key: #2c2c2e; --key-edge: #48484a;
+  --hero: #1c1c1e; --shadow: 0 0 0 1px #2c2c2e;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #000000; --sheet: #1c1c1e; --ink: #f5f5f7; --muted: #a1a1a6; --line: #38383a;
+  --accent: #e5534b; --accent-ink: #ffffff; --accent-soft: #3a1c1b; --mark: #4ea1ff; --mark-soft: #102a45;
+  --ok: #5fd07c; --ok-soft: #12301b; --bad: #ff7b6e; --bad-soft: #3b1714; --key: #2c2c2e; --key-edge: #48484a;
+  --hero: #1c1c1e; --shadow: 0 0 0 1px #2c2c2e;
+  color-scheme: dark }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--f-body); -webkit-font-smoothing: antialiased;
+  padding-bottom: 48px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; margin: 0; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--mark); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 12px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+kbd, .kbd { font: 700 14px/1 var(--f-mono); background: var(--key); border: 1px solid var(--key-edge); border-bottom-width: 3px; border-radius: 7px; padding: 4px 7px; display: inline-block; white-space: nowrap; }
+code, .path { font-family: var(--f-mono); font-size: .88em; background: var(--key); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+
+/* top bar — like the IHSM site navigation */
+.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--sheet) 88%, transparent); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; justify-content: space-between; min-height: 64px; padding-block: 8px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ink); }
+.crest { width: 40px; height: 40px; flex: none; }
+.crest circle { fill: none; stroke: var(--accent); stroke-width: 2; }
+.crest text { fill: var(--accent); font: 800 11px/1 var(--f-display); letter-spacing: .02em; }
+.brand .school { font: 700 11px/1.25 var(--f-display); letter-spacing: .06em; text-transform: uppercase; }
+.brand .sep { width: 1px; align-self: stretch; background: var(--ink); opacity: .7; margin: 4px 2px; }
+.brand h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.steps { display: flex; gap: 4px; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; }
+.steps li { font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+.steps li.done { color: var(--ok); }
+.steps li.done::before { content: "✓ "; }
+.steps li.now { background: var(--ink); color: var(--bg); }
+.teacher-link { font-size: 14px; font-weight: 600; }
+
+main { padding-top: 28px; }
+.sheet { background: var(--sheet); border-radius: var(--r); box-shadow: var(--shadow); padding: clamp(20px, 4vw, 44px); }
+.stack { display: grid; gap: 18px; }
+.btn { border: 0; border-radius: 999px; padding: 12px 26px; font-weight: 600; cursor: pointer; background: var(--accent); color: var(--accent-ink); transition: filter .15s, transform .15s; }
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: scale(.98); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.note { font-size: 15px; color: var(--muted); }
+.banner { border-radius: 14px; padding: 13px 16px; font-size: 15px; }
+.banner.warn { background: var(--mark-soft); }
+.banner.ok { background: var(--ok-soft); }
+.banner.bad { background: var(--bad-soft); }
+label.field { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+input[type=text], input[type=password], textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; width: 100%; font-weight: 400; }
+input:focus, textarea:focus, select:focus { border-color: var(--mark); outline: none; box-shadow: 0 0 0 3px var(--mark-soft); }
+textarea { min-height: 96px; resize: vertical; }
+.grid2 { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.check { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; background: var(--bg); border-radius: 12px; cursor: pointer; }
+.check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+
+/* hero on the start screen — like the IHSM homepage banner */
+.hero { border-radius: var(--r); padding: clamp(28px, 6vw, 64px) clamp(20px, 5vw, 56px); color: #fff; text-align: center; display: grid; gap: 14px; justify-items: center;
+  background: radial-gradient(120% 140% at 50% 0%, #b8302d 0%, #7d1d1b 55%, #3b0d0c 100%); }
+.hero .eyebrow { color: rgb(255 255 255 / .8); }
+.hero h2 { font-size: clamp(30px, 6vw, 56px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; max-width: 18ch; }
+.hero p { font-size: clamp(17px, 2.4vw, 24px); max-width: 40ch; opacity: .92; }
+.hero .meta { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.hero .meta span { font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgb(255 255 255 / .14); }
+
+/* slides */
+.deck { display: grid; gap: 16px; }
+.slide { background: var(--sheet); border-radius: var(--r); box-shadow: var(--shadow); padding: clamp(20px, 4vw, 48px); min-height: min(560px, 78vh); display: grid; align-content: start; gap: 20px; position: relative; overflow-wrap: anywhere; }
+.slide .no { position: absolute; top: 18px; right: 22px; font: 600 13px/1 var(--f-mono); color: var(--muted); }
+.slide h2 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 700; max-width: 22ch; }
+.slide .lead { font-size: clamp(18px, 2.2vw, 22px); color: var(--muted); max-width: 60ch; }
+.slide ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.tiles { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.tile { background: var(--bg); border-radius: 14px; padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.tile b { font-family: var(--f-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.tile .unit { font: 600 11px/1 var(--f-body); color: var(--accent); letter-spacing: .1em; text-transform: uppercase; }
+.analogy { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.analogy .tile { border-top: 4px solid var(--accent); }
+.analogy svg { width: 46px; height: 46px; }
+.analogy svg * { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+table.ext { border-collapse: collapse; width: 100%; font-size: 16px; }
+table.ext td, table.ext th { border-bottom: 1px solid var(--line); padding: 9px 6px; text-align: left; vertical-align: top; }
+.tblwrap { overflow-x: auto; }
+.tree { font: 500 15px/1.7 var(--f-mono); background: var(--bg); border-radius: 12px; padding: 14px 16px; white-space: pre; overflow-x: auto; }
+.good { color: var(--ok); font-weight: 700; } .bad { color: var(--bad); font-weight: 700; }
+.rule321 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rule321 div { border-radius: 14px; padding: 16px; background: var(--accent-soft); display: grid; gap: 4px; }
+.rule321 strong { font: 800 42px/1 var(--f-display); color: var(--accent); }
+@media (max-width: 520px) { .rule321 { grid-template-columns: 1fr; } }
+.keys { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.keyrow { display: flex; gap: 10px; align-items: center; background: var(--bg); border-radius: 12px; padding: 10px 12px; border: 1px solid transparent; }
+.keyrow.hit { border-color: var(--ok); background: var(--ok-soft); }
+.keyrow .combo { flex: none; display: flex; gap: 4px; }
+.term { border: 0; background: none; padding: 0; color: inherit; font: inherit; font-weight: 600; border-bottom: 2px dotted var(--accent); cursor: help; }
+.pop { position: fixed; z-index: 30; max-width: min(340px, calc(100vw - 32px)); background: var(--ink); color: var(--bg); border-radius: 14px; padding: 13px 15px; font-size: 15px; box-shadow: 0 12px 32px rgb(0 0 0 / .25); }
+.pop b { display: block; margin-bottom: 4px; }
+.deck-nav { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+.dots { display: flex; gap: 6px; flex-wrap: wrap; }
+.dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.dots span.seen { background: color-mix(in srgb, var(--accent) 40%, var(--line)); } .dots span.cur { background: var(--accent); width: 22px; border-radius: 4px; }
+
+/* quiz */
+.q { background: var(--sheet); border: 0; border-radius: var(--r); box-shadow: var(--shadow); padding: 22px; display: grid; gap: 12px; margin: 0; min-width: 0; }
+.q h3 { font-size: 19px; font-family: var(--f-body); font-weight: 600; letter-spacing: -0.01em; }
+.q .num { font: 600 12px/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0; }
+.opt { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; background: var(--bg); border: 1px solid transparent; border-radius: 12px; cursor: pointer; }
+.opt input { margin-top: 5px; accent-color: var(--accent); flex: none; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.match { display: grid; gap: 8px; }
+.match label { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 160px); gap: 10px; align-items: center; }
+.explain { font-size: 15px; border-left: 3px solid var(--accent); padding-left: 12px; }
+.score { font: 800 64px/1 var(--f-display); color: var(--accent); letter-spacing: -0.03em; }
+
+/* practice + result card */
+.task { display: grid; gap: 4px; }
+.level { display: inline-block; font: 600 12px/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; }
+.card { border: 2px dashed var(--accent); border-radius: var(--r); padding: 20px; display: grid; gap: 6px; }
+.card .code { font: 700 24px/1 var(--f-mono); letter-spacing: .14em; }
+
+/* teacher */
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 18px; background: var(--sheet); border-radius: 999px; padding: 4px; box-shadow: var(--shadow); width: fit-content; max-width: 100%; }
+.tabs button { border: 0; background: none; padding: 9px 16px; font-weight: 600; font-size: 15px; color: var(--muted); border-radius: 999px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--bg); background: var(--ink); }
+.plan { display: grid; gap: 12px; }
+.phase { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px; border-radius: 14px; padding: 18px; background: var(--sheet); box-shadow: var(--shadow); }
+.phase.now { box-shadow: inset 4px 0 0 var(--accent), var(--shadow); }
+.phase .t { font: 700 15px/1.3 var(--f-mono); color: var(--accent); }
+.phase h3 { font-size: 18px; margin-bottom: 6px; }
+.say { background: var(--accent-soft); border-radius: 12px; padding: 11px 14px; font-size: 16px; }
+.say::before { content: "SAY: "; font: 700 12px/1 var(--f-body); letter-spacing: .1em; color: var(--accent); }
+.tip { background: var(--mark-soft); border-radius: 12px; padding: 11px 14px; font-size: 15px; }
+.tip::before { content: "Совет: "; font-weight: 700; color: var(--mark); }
+.ask { box-shadow: inset 0 0 0 1px var(--accent); border-radius: 12px; padding: 11px 14px; font-size: 16px; }
+.ask::before { content: "ASK: "; font: 700 12px/1 var(--f-body); letter-spacing: .1em; color: var(--accent); }
+.presenter { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 860px) { .presenter { grid-template-columns: 1fr; } .phase { grid-template-columns: 1fr; } }
+.presenter .slide { min-height: 0; }
+.notes { display: grid; gap: 12px; position: sticky; top: 84px; }
+.clock { font: 700 30px/1 var(--f-mono); font-variant-numeric: tabular-nums; }
+.stats { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.stat { border-radius: 14px; padding: 16px; background: var(--sheet); box-shadow: var(--shadow); }
+.stat b { display: block; font: 700 32px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+table.res { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+table.res th, table.res td { border-bottom: 1px solid var(--line); padding: 9px 8px; text-align: left; vertical-align: top; }
+table.res th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.bad { background: var(--bad-soft); color: var(--bad); }
+.bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; min-width: 80px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.bar.low i { background: var(--bad); }
+footer { margin-top: 40px; font-size: 13px; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: no-preference) { .slide, .q, .sheet { animation: in .3s ease-out; } @keyframes in { from { transform: translateY(8px); opacity: .5; } to { transform: none; opacity: 1; } } }
+@media print { .top, .deck-nav, .btn { display: none !important; } body { background: #fff; } .sheet, .slide, .q { box-shadow: none; border: 1px solid #ccc; } }
+details summary { cursor: pointer; padding: 6px 0; }
+details[disabled] summary { color: var(--muted); }
+.stat:hover { transform: translateY(-2px); }
+.qbox { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 4px; }
+.sorter { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.sorter:hover { color: var(--accent); }
+tr.gsep td { background: var(--bg); font-weight: 600; color: var(--accent); font-size: 13px; letter-spacing: .04em; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="../" aria-label="IHSM Informatics">
+    <svg class="crest" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/><text x="20" y="24" text-anchor="middle">IHSM</text></svg>
+    <span class="school">International<br>Higher School<br>of Medicine</span><span class="sep" aria-hidden="true"></span><h1>Журнал преподавателя</h1>
+  </a>
+  <span class="row" id="topActions" hidden><button class="btn ghost" id="reload" style="padding:8px 16px">Обновить</button><button class="btn ghost" id="logout" style="padding:8px 16px">Выйти</button></span>
+</div></header>
+<main class="wrap stack" id="app"></main>
+<footer class="wrap">Данные загружаются из вашей Google Таблицы · Informatics · IHSM</footer>
+
+<script>
+const PIN_HASH = "6105baf5e22f18623c5be2a517bc94206ee53fa8a32e0e67b5a949739be99120";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwrK_rkHUwYUT0Nb4ZwIUozR9pgRIm3_4BYaVELARQsRXUdfo_MF2y9_b_2ll8A_Icl/exec";
+/* lessons on the site: add a line here when a new lesson is published */
+const LESSONS = [
+  { id: "L1", n: 1, title: "Your computer: a doctor's working tool", url: "../lesson1/#teacher", questions: 10 },
+  { id: "L2", n: 2, title: "Working in the cloud safely", url: "../lesson2/#teacher", questions: 10 },
+  { id: "L3", n: 3, title: "Word: medical documents, styles and tables", url: "../lesson3/#teacher", questions: 10 },
+  { id: "L4", n: 4, title: "Word: writing a scientific paper", url: "../lesson4/#teacher", questions: 10 },
+  { id: "L5", n: 5, title: "Excel: good medical data and formulas", url: "../lesson5/#teacher", questions: 10 },
+  { id: "L6", n: 6, title: "Excel: functions and descriptive statistics", url: "../lesson6/#teacher", questions: 10 },
+  { id: "L7", n: 7, title: "Excel: pivot tables and charts", url: "../lesson7/#teacher", questions: 10 },
+  { id: "L8", n: 8, title: "Google Forms → Excel: mini-study", url: "../lesson8/#teacher", questions: 10 }
+];
+const PASS = 70;
+
+const app = document.getElementById("app");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = s => String(s ?? "").toLowerCase().replace(/\s+/g, " ").trim();
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+                del: k => { try { localStorage.removeItem(k); } catch (e) {} } };
+async function sha(s) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
+
+let rows = [], loadedAt = null, group = store.get("inf-journal-group") || "", query = "";
+let sortBy = store.get("inf-journal-sort") || "group", sortDir = Number(store.get("inf-journal-dir")) || 1;
+const byGroup = (a, b) => a.group.localeCompare(b.group, undefined, { numeric: true }) || a.name.localeCompare(b.name);
+const passedCount = s => LESSONS.filter(L => { const r = s.lessons[L.id]; return r && Number(r.best) >= PASS; }).length;
+function sortList(list) {
+  const val = s => sortBy === "name" ? s.name.toLowerCase() : sortBy === "done" ? passedCount(s)
+    : sortBy.startsWith("L") ? (s.lessons[sortBy] ? Number(s.lessons[sortBy].best) || 0 : -1) : null;
+  return list.slice().sort((a, b) => {
+    if (sortBy === "group") return sortDir * byGroup(a, b);
+    const x = val(a), y = val(b);
+    const c = typeof x === "string" ? x.localeCompare(y) : x - y;
+    return sortDir * c || byGroup(a, b);
+  });
+}
+function setSort(k) { if (sortBy === k) sortDir = -sortDir; else { sortBy = k; sortDir = (k === "name" || k === "group") ? 1 : -1; } store.set("inf-journal-sort", sortBy); store.set("inf-journal-dir", String(sortDir)); render(); }
+
+function gate(msg = "") {
+  document.getElementById("topActions").hidden = true;
+  app.innerHTML = `<section class="sheet stack" style="max-width:520px;margin:0 auto">
+    <p class="eyebrow">Teacher · Преподаватель</p><h2>Журнал преподавателя</h2>
+    <p class="note">Результаты всех онлайн-уроков из вашей Google Таблицы.</p>
+    <label class="field" for="pin">PIN-код<input type="password" id="pin" inputmode="numeric" autocomplete="off"></label>
+    <div class="row"><button class="btn" id="pinGo">Войти</button><span class="note" id="pinMsg">${esc(msg)}</span></div></section>`;
+  const go = async () => {
+    const pin = document.getElementById("pin").value.trim();
+    if (await sha("ihsm-inf:" + pin) !== PIN_HASH) { document.getElementById("pinMsg").textContent = "Неверный PIN."; return; }
+    store.set("inf-teacher", PIN_HASH); store.set("inf-teacher-key", pin); load();
+  };
+  document.getElementById("pinGo").onclick = go;
+  document.getElementById("pin").onkeydown = e => { if (e.key === "Enter") go(); };
+}
+
+async function load() {
+  const key = store.get("inf-teacher-key");
+  if (store.get("inf-teacher") !== PIN_HASH || !key) return gate();
+  document.getElementById("topActions").hidden = false;
+  app.innerHTML = `<p class="note">Загружаю результаты из Google Таблицы…</p>`;
+  try {
+    const r = await fetch(SHEET_URL + "?key=" + encodeURIComponent(key));
+    const j = await r.json();
+    if (!j.ok) { store.del("inf-teacher-key"); return gate(j.error === "wrong key" ? "PIN не совпадает с ключом в скрипте таблицы." : "Ошибка таблицы: " + j.error); }
+    rows = j.rows; loadedAt = new Date(); render();
+  } catch (e) {
+    app.innerHTML = `<div class="banner bad">Не удалось связаться с Google Таблицей. Проверьте интернет и нажмите «Обновить».</div>`;
+  }
+}
+
+/* one record per student (name + group), with that student's row for every lesson */
+function students() {
+  const map = new Map();
+  for (const r of rows) {
+    const k = norm(r.name) + "|" + norm(r.group);
+    if (!map.has(k)) map.set(k, { name: String(r.name).trim(), group: String(r.group).trim(), lessons: {} });
+    const st = map.get(k), old = st.lessons[r.lesson];
+    if (!old || new Date(r.updatedAt) > new Date(old.updatedAt)) st.lessons[r.lesson] = r;
+  }
+  return [...map.values()].sort((a, b) => a.group.localeCompare(b.group, undefined, { numeric: true }) || a.name.localeCompare(b.name));
+}
+
+
+/* a comment is a question if it asks something or names a difficulty — not "Nothing", "Thank you", "All clear" */
+function isQuestion(t) {
+  t = String(t || "").trim().toLowerCase();
+  if (t.length < 8) return false;
+  if (/^(nothing|no|none|nope|thank|thanks|all (was )?clear|everything (was |is )?clear|ok|good|great|nice|very good)\b/.test(t) && !t.includes("?")) return false;
+  return t.includes("?") || /\b(why|how|what|which|when|where|explain|difficult|hard|unclear|confus|did not understand|didn't understand|don't understand|not understand|problem|could not|couldn't)\b/.test(t);
+}
+
+function status(r) {
+  if (!r) return { cls: "", text: "—", tip: "не начинал" };
+  const attempts = Number(r.attempts) || 0, best = Number(r.best) || 0;
+  if (!attempts) return { cls: "", text: "начал", tip: "слайды, тест ещё не сдан" };
+  const tip = `лучший балл ${best}% · попыток ${attempts} · уровень ${r.level || "—"} · заданий практики ${(r.practice || []).length}` + (r.submitted ? " · отправлено" : " · не отправлено");
+  return { cls: best >= PASS ? "ok" : "bad", text: best + "%" + (r.submitted ? " ✓" : ""), tip };
+}
+
+function render() {
+  const all = students();
+  const groups = [...new Set(all.map(s => s.group))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  if (group && !groups.includes(group)) group = "";
+  const list = sortList(all.filter(s => (!group || s.group === group) && (!query || norm(s.name).includes(norm(query)))));
+  const th = (k, label, title = "") => `<th><button type="button" class="sorter" data-sort="${k}" title="${esc(title || "Сортировать")}">${label}${sortBy === k ? (sortDir > 0 ? " ▲" : " ▼") : ""}</button></th>`;
+  const sum = LESSONS.map(L => {
+    const rs = list.map(s => s.lessons[L.id]).filter(Boolean);
+    const tested = rs.filter(r => Number(r.attempts) > 0);
+    return { L, started: rs.length, tested: tested.length, passed: tested.filter(r => Number(r.best) >= PASS).length,
+      submitted: rs.filter(r => r.submitted).length,
+      avg: tested.length ? Math.round(tested.reduce((a, r) => a + Number(r.best || 0), 0) / tested.length) : null };
+  });
+  app.innerHTML = `
+    <section class="row" style="justify-content:space-between;align-items:end">
+      <div><p class="eyebrow">Все уроки · ${list.length} студ.</p><h2 style="font-size:clamp(26px,4vw,36px)">Журнал онлайн-уроков</h2></div>
+      <div class="row" style="align-items:end">
+        <label class="field" for="g">Группа<select id="g"><option value="">Все группы</option>${groups.map(g => `<option ${g === group ? "selected" : ""}>${esc(g)}</option>`).join("")}</select></label>
+        <label class="field" for="sb">Сортировать по<select id="sb">${[["group", "группе"], ["name", "фамилии"], ...LESSONS.map(L => [L.id, "баллу за урок " + L.n]), ["done", "числу сданных уроков"]].map(([k, l]) => `<option value="${k}" ${k === sortBy ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+        <label class="field" for="q">Поиск студента<input type="text" id="q" value="${esc(query)}" placeholder="Фамилия или имя"></label>
+        <button class="btn" id="csv">Скачать для Excel</button>
+      </div>
+    </section>
+    <section class="stats">${sum.map(s => `<a class="stat" href="${s.L.url}" style="color:inherit;text-decoration:none">
+      <span class="note">Урок ${s.L.n} · ${esc(s.L.title)}</span><b>${s.avg === null ? "—" : s.avg + "%"}</b>
+      <span class="note">сдали тест ${s.passed} из ${s.tested} · отправили ${s.submitted} · начали ${s.started}</span></a>`).join("")}</section>
+    <section class="sheet stack">
+      <p class="eyebrow">Студенты</p>
+      ${list.length ? `<div class="tblwrap"><table class="res"><tr>${th("name", "Студент")}${th("group", "Группа")}${LESSONS.map(L => th(L.id, "Урок " + L.n, L.title)).join("")}${th("done", "Сдано уроков")}</tr>
+        ${list.map((s, i) => `${sortBy === "group" && (i === 0 || list[i - 1].group !== s.group) ? `<tr class="gsep"><td colspan="${LESSONS.length + 3}">Группа ${esc(s.group)} · ${list.filter(x => x.group === s.group).length} студ.</td></tr>` : ""}<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.group)}</td>${LESSONS.map(L => { const st = status(s.lessons[L.id]);
+          return `<td title="${esc(st.tip)}">${st.cls ? `<span class="pill ${st.cls}">${esc(st.text)}</span>` : `<span class="note">${esc(st.text)}</span>`}</td>`; }).join("")}
+          <td>${LESSONS.filter(L => { const r = s.lessons[L.id]; return r && Number(r.best) >= PASS; }).length} / ${LESSONS.length}</td></tr>`).join("")}
+      </table></div>
+      <p class="note">✓ — студент нажал «Send»: результат окончательный. Зелёный — 70% и выше. Наведите на ячейку, чтобы увидеть попытки, уровень и практику.</p>`
+      : `<p class="note">Пока нет результатов${group || query ? " по этому фильтру" : ""}. Они появятся, когда студенты начнут уроки.</p>`}
+    </section>
+    <section class="sheet stack"><p class="eyebrow">Вопросы студентов</p>
+      ${(() => { const qs = []; LESSONS.forEach(L => list.forEach(s => { const r = s.lessons[L.id]; if (r && isQuestion(r.reflection)) qs.push([L, s, r]); }));
+        return qs.length ? qs.map(([L, s, r]) => `<div class="qbox"><p class="note">Урок ${L.n} · <b>${esc(s.name)}</b> (гр. ${esc(s.group)})</p><p>${esc(r.reflection)}</p></div>`).join("")
+          : '<p class="note">Содержательных вопросов пока нет.</p>'; })()}
+      <p class="note">Сюда попадают комментарии с вопросом или с описанием трудности. Ответы на них можно добавить на страницу урока — тогда их увидят все студенты.</p>
+    </section>
+    <section class="sheet stack"><p class="eyebrow">Остальные отзывы</p>
+      ${LESSONS.map(L => { const items = list.map(s => [s, s.lessons[L.id]]).filter(([, r]) => r && String(r.reflection || "").trim() && !isQuestion(r.reflection));
+        return `<details><summary><b>Урок ${L.n}</b> · ${items.length} отзыв(ов)</summary>
+          <div class="stack" style="gap:8px;margin-top:10px">${items.map(([s, r]) => `<p><b>${esc(s.name)}</b> <span class="note">(гр. ${esc(s.group)})</span>: ${esc(r.reflection)}</p>`).join("") || '<p class="note">Нет отзывов.</p>'}</div></details>`; }).join("")}
+    </section>
+    <p class="note">Обновлено: ${loadedAt.toLocaleString("ru-RU")}. Подробный разбор вопросов урока — в панели урока (нажмите на карточку урока выше).</p>`;
+  document.getElementById("g").onchange = e => { group = e.target.value; store.set("inf-journal-group", group); render(); };
+  const q = document.getElementById("q");
+  q.oninput = e => { query = e.target.value; const pos = q.selectionStart; render(); const nq = document.getElementById("q"); nq.focus(); nq.setSelectionRange(pos, pos); };
+  document.getElementById("csv").onclick = () => exportCSV(list);
+  document.getElementById("sb").onchange = e => { sortBy = e.target.value; sortDir = (sortBy === "name" || sortBy === "group") ? 1 : -1; store.set("inf-journal-sort", sortBy); store.set("inf-journal-dir", String(sortDir)); render(); };
+  app.querySelectorAll(".sorter").forEach(b => b.onclick = () => setSort(b.dataset.sort));
+}
+
+function exportCSV(list) {
+  const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const head = ["Студент", "Группа", ...LESSONS.flatMap(L => [`Урок ${L.n}: лучший балл %`, `Урок ${L.n}: попыток`, `Урок ${L.n}: отправлено`])];
+  const lines = [head.map(cell).join(";")];
+  for (const s of list) lines.push([s.name, s.group, ...LESSONS.flatMap(L => { const r = s.lessons[L.id];
+    return r ? [Number(r.best) || 0, Number(r.attempts) || 0, r.submitted ? "да" : "нет"] : ["", "", ""]; })].map(cell).join(";"));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `informatics_journal${group ? "_group_" + group : ""}_${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+document.getElementById("reload").onclick = load;
+document.getElementById("logout").onclick = () => { store.del("inf-teacher"); store.del("inf-teacher-key"); gate(); };
+load();
+</script>
+</body>
+</html>

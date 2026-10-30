@@ -322,7 +322,7 @@ function render() {
   const all = students();
   const groups = [...new Set(all.map(s => s.group))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   if (group && !groups.includes(group)) group = "";
-  const list = sortList(all.filter(s => (!group || s.group === group) && (!query || norm(s.name).includes(norm(query)))));
+  const list = sortList(all.filter(s => (group ? s.group === group : s.group !== "0") && (!query || norm(s.name).includes(norm(query)))));
   const th = (k, label, title = "") => `<th><button type="button" class="sorter" data-sort="${k}" title="${esc(title || "Сортировать")}">${label}${sortBy === k ? (sortDir > 0 ? " ▲" : " ▼") : ""}</button></th>`;
   const sum = LESSONS.map(L => {
     const rs = list.map(s => s.lessons[L.id]).filter(Boolean);
@@ -335,7 +335,7 @@ function render() {
     <section class="row" style="justify-content:space-between;align-items:end">
       <div><p class="eyebrow">Все уроки · ${list.length} студ.</p><h2 style="font-size:clamp(26px,4vw,36px)">Журнал онлайн-уроков</h2></div>
       <div class="row" style="align-items:end">
-        <label class="field" for="g">Группа<select id="g"><option value="">Все группы</option>${groups.map(g => `<option ${g === group ? "selected" : ""}>${esc(g)}</option>`).join("")}</select></label>
+        <label class="field" for="g">Группа<select id="g"><option value="">Все группы</option>${groups.map(g => `<option value="${esc(g)}" ${g === group ? "selected" : ""}>${g === "0" ? "0 (тест)" : esc(g)}</option>`).join("")}</select></label>
         <label class="field" for="sb">Сортировать по<select id="sb">${[["group", "группе"], ["name", "фамилии"], ...LESSONS.map(L => [L.id, "баллу за урок " + L.n]), ["done", "числу сданных уроков"]].map(([k, l]) => `<option value="${k}" ${k === sortBy ? "selected" : ""}>${l}</option>`).join("")}</select></label>
         <label class="field" for="q">Поиск студента<input type="text" id="q" value="${esc(query)}" placeholder="Фамилия или имя"></label>
         <button class="btn" id="csv">Скачать для Excel</button>
